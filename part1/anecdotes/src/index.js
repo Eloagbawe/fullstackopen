@@ -20,12 +20,12 @@ const App = (props) => {
     <div>
       <h1>Anecdote of the day</h1>
       <p>{props.anecdotes[selected]}</p>
-      <p>This has {vote[selected]} votes</p>
+      <p>has {vote[selected]} votes</p>
       <button onClick = {updateVote}>Vote</button> 
       <button onClick={randomNum}>Next anecdote</button>
       <h1>Anecdote with the most votes</h1>
       <p>{props.anecdotes[maxIndex]}</p>
-      <p>This has {maxVote} votes</p>
+      <p>has {maxVote} votes</p>
     </div>
   )
 }
@@ -39,11 +39,6 @@ const anecdotes = [
   'Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.'
 ]
 const votes = Array.apply(null, new Array(anecdotes.length)).map(Number.prototype.valueOf,0);
-
-ReactDOM.render(
-  <App anecdotes={anecdotes} votes={votes}/>,
-  document.getElementById('root')
-)
 
 ReactDOM.render(
   <React.StrictMode>
