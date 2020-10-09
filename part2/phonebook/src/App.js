@@ -20,12 +20,12 @@ const App = () => {
     const nameObject = {
       name: newName
     }  
-
-    for (var x in persons){
-      if (persons[x].name === newName){
+    
+    persons.forEach(person => {
+      if (person.name === newName){
         alert(`${newName} is already added to phonebook`)
       }
-    }
+    })
     setPersons(persons.concat(nameObject))
     setNewName('')
   
