@@ -9,10 +9,10 @@ const CountryDetails = ({country, weather}) =>{
                 <h2>Spoken Languages</h2>
                 <ul>{country.languages.map(language => <li key = {language.name}>{language.name}</li>)}</ul>
                 <img src = {country.flag} alt = "" width = '400px' height ='200px'></img>
-                <h2>Weather in {country.capital}</h2>
+                {/* <h2>Weather in {country.capital}</h2>
                 <p>temperature: {weather.temperature} Celsius</p>
                 <img src = {weather.weather_icons[0]} alt = {weather.weather_icons[1]} width = '400px' height ='200px'></img>
-                <p>wind: {weather.wind_speed} m/s direction {weather.wind_dir}</p>
+                <p>wind: {weather.wind_speed} m/s direction {weather.wind_dir}</p> */}
                 </div>
     )
 }

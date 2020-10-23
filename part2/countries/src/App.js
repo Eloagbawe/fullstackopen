@@ -5,6 +5,9 @@ import CountryDetails from './components/countryDetails.js'
 
 import './App.css';
 
+dotenv.config();
+const accessKey = process.env.ACCESS_KEY
+
 
 const App = () => {
   const [ countries, setCountries ] = useState([])
@@ -20,15 +23,17 @@ const App = () => {
         setCountries(response.data)
       })
   }, [])
+  console.log(accessKey)
   
   useEffect(() => {
     axios
-      .get(`http://api.weatherstack.com/current?access_key=${ACCESS_KEY}&query=${capital}`)
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${accessKey}`)
       .then(response => {
-        setWeatherDetails(response.data.current)
+        setWeatherDetails(response.data)
+        
       })
-  })
-
+  }, [])
+  console.log(weatherDetails)
   const handleSearch = (event) => {
     setFilter(event.target.value)
       if (event.target.value !== ''){
@@ -38,10 +43,10 @@ const App = () => {
         const back = () => {
           setFilteredCountries(search.map(country =>{
             return <p key = {country.name}>{country.name} <button onClick={() => {
-              const cap = country.capital
-              setCapital(cap)
-              console.log(country.capital)
-              console.log(capital)
+              // const cap = country.capital
+              // setCapital(cap)
+              // console.log(country.capital)
+              // console.log(capital)
               
               setFilteredCountries(
                 <div key = {country.name}>
@@ -61,20 +66,20 @@ const App = () => {
           else {
             setFilteredCountries(search.map(country => {
               if (search.length === 1){
-                const cap = country.capital
-                setCapital(cap)
-                console.log(country.capital)
-                console.log(capital)
+                // const cap = country.capital
+                // setCapital(cap)
+                // console.log(country.capital)
+                // console.log(capital)
                 return <div key = {country.name}>
                    <CountryDetails country = {country} weather = {weatherDetails}/>
                 </div>
               } 
               else {
                 return <p key = {country.name}>{country.name}<button onClick={() => {
-                  const cap = country.capital
-                  setCapital(cap)
-                  console.log(country.capital)
-                  console.log(capital)
+                  // const cap = country.capital
+                  // setCapital(cap)
+                  // console.log(country.capital)
+                  // console.log(capital)
                   setFilteredCountries(
                     <div key = {country.name}>
                     <CountryDetails  country = {country} weather = {weatherDetails}/>
