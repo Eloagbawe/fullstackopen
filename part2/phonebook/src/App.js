@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import './index.css'
 import Persons from './components/persons.js';
 import Filter from './components/filter.js';
 import PersonForm from './components/personForm.js';
 import personService from './services/persons.js';
+import Notification from './components/notification.js';
 
 
 const App = () => {
@@ -13,6 +15,7 @@ const App = () => {
   const [ filteredNames, setFilteredNames ] = useState([])
   const [ newName, setNewName ] = useState('...a new name')
   const [ newNumber, setNewNumber ] = useState('...a new number')
+  const [ successMessage, setSuccessMessage ] = useState(null) 
 
   useEffect(() => {
     personService
@@ -66,9 +69,18 @@ const App = () => {
         personService
         .update(foundName.id, changedName)
         .then(returnedName => {
+          setSuccessMessage(`Changed ${newName}'s number`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
           setPersons(persons.map(person => person.id !== foundName.id ? person : returnedName))
           setFilteredNames(filteredNames.map(name => name.id !== foundName.id ? name : returnedName))
         })
+        .catch(error => {
+        alert(
+          `${personObject.name} was already deleted from server`
+        )
+      })
       }
         setNewName('')
         setNewNumber('')
@@ -79,6 +91,10 @@ const App = () => {
       personService
       .create(personObject)
       .then(returnedPersonObject => {
+        setSuccessMessage(`Added ${newName}`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
         setPersons(persons.concat(returnedPersonObject))
         setFilteredNames(persons.concat(returnedPersonObject))
         setFilter('')
@@ -93,7 +109,11 @@ const App = () => {
     if (window.confirm(`Delete ${personObject.name} ?`)){
       personService
       .deleteId(id)
-      console.log(`Contact ${id} deleted`)
+      // .catch(error => {
+      //   alert(
+      //     `${personObject.name} was already deleted from server`
+      //   )
+      // })
       setPersons(persons.filter(person => person.id !== id))
       setFilteredNames(filteredNames.filter(name => name.id !== id))
     } 
@@ -102,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message = {successMessage}/>
       <Filter filter = {filter} handleFilterChange = {handleFilterChange}/>
       <h3>Add a new</h3>
       <PersonForm addName = {addName} newName = {newName} handleNameChange = {handleNameChange} newNumber = {newNumber} handleNumberChange = {handleNumberChange}/>
