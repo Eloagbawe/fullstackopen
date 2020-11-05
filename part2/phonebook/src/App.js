@@ -15,8 +15,8 @@ const App = () => {
   const [ filteredNames, setFilteredNames ] = useState([])
   const [ newName, setNewName ] = useState('...a new name')
   const [ newNumber, setNewNumber ] = useState('...a new number')
-  const [ successMessage, setSuccessMessage ] = useState(null) 
-
+  const [ message, setMessage ] = useState(null) 
+  const [ propertyName, setPropertyName ] = useState('')
   useEffect(() => {
     personService
     .getAll()
@@ -69,17 +69,20 @@ const App = () => {
         personService
         .update(foundName.id, changedName)
         .then(returnedName => {
-          setSuccessMessage(`Changed ${newName}'s number`)
+          setMessage(`Changed ${newName}'s number`)
+          setPropertyName('success')
           setTimeout(() => {
-            setSuccessMessage(null)
+            setMessage(null)
           }, 5000)
           setPersons(persons.map(person => person.id !== foundName.id ? person : returnedName))
           setFilteredNames(filteredNames.map(name => name.id !== foundName.id ? name : returnedName))
         })
         .catch(error => {
-        alert(
-          `${personObject.name} was already deleted from server`
-        )
+        setMessage(`Information of ${personObject.name} has already been removed from server`)
+        setPropertyName('fail')
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
       }
         setNewName('')
@@ -91,9 +94,10 @@ const App = () => {
       personService
       .create(personObject)
       .then(returnedPersonObject => {
-        setSuccessMessage(`Added ${newName}`)
+        setMessage(`Added ${newName}`)
+        setPropertyName('success')
           setTimeout(() => {
-            setSuccessMessage(null)
+            setMessage(null)
           }, 5000)
         setPersons(persons.concat(returnedPersonObject))
         setFilteredNames(persons.concat(returnedPersonObject))
@@ -122,7 +126,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message = {successMessage}/>
+      <Notification message = {message} propertyName = {propertyName}/>
       <Filter filter = {filter} handleFilterChange = {handleFilterChange}/>
       <h3>Add a new</h3>
       <PersonForm addName = {addName} newName = {newName} handleNameChange = {handleNameChange} newNumber = {newNumber} handleNumberChange = {handleNumberChange}/>
