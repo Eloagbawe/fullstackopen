@@ -17,6 +17,8 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('...a new number')
   const [ message, setMessage ] = useState(null) 
   const [ propertyName, setPropertyName ] = useState('')
+
+
   useEffect(() => {
     personService
     .getAll()
@@ -24,6 +26,7 @@ const App = () => {
       setPersons(initialPersons)
       setFilteredNames(initialPersons)
     })
+    .catch(err => console.log(err))
   },[])
   
   
@@ -77,7 +80,8 @@ const App = () => {
           setPersons(persons.map(person => person.id !== foundName.id ? person : returnedName))
           setFilteredNames(filteredNames.map(name => name.id !== foundName.id ? name : returnedName))
         })
-        .catch(error => {
+        .catch(err => {
+          console.log(err)
         setMessage(`Information of ${personObject.name} has already been removed from server`)
         setPropertyName('fail')
         setTimeout(() => {
@@ -112,15 +116,23 @@ const App = () => {
     const personObject = persons.find(person => person.id === id)
     if (window.confirm(`Delete ${personObject.name} ?`)){
       personService
-      .deleteId(id)
-      // .catch(error => {
-      //   alert(
-      //     `${personObject.name} was already deleted from server`
-      //   )
-      // })
-      setPersons(persons.filter(person => person.id !== id))
-      setFilteredNames(filteredNames.filter(name => name.id !== id))
-    } 
+      .get(id)
+      .then(res => {
+        if (res.length === 0){
+          setMessage(`Information of ${personObject.name} has already been removed from server`)
+          setPropertyName('fail')
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+        }  
+      })
+
+      personService
+      .deleteId(id) 
+    }
+    
+    setPersons(persons.filter(person => person.id !== id))
+    setFilteredNames(filteredNames.filter(name => name.id !== id))
     }
     
   return (

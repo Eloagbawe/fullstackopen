@@ -11,6 +11,10 @@ const getAll = () => {
     const request = axios.get(baseUrl)
     return request.then(response => response.data)
 }
+const get = (id) => {
+    const request = axios.get(`${baseUrl}?id=${id}`)
+    return request.then(response => response.data)
+}
 
 const update = (id,personObject) => {
     const request = axios.put(`${baseUrl}/${id}`,personObject)
@@ -23,4 +27,4 @@ const deleteId = id => {
 
 
 
-export default { create, getAll, update, deleteId }
+export default { create, getAll, get, update, deleteId }
