@@ -105,10 +105,13 @@ const App = () => {
           }, 5000)
         setPersons(persons.concat(returnedPersonObject))
         setFilteredNames(persons.concat(returnedPersonObject))
-        setFilter('')
-        setNewName('')
-        setNewNumber('')
       })
+      .catch(err => {
+        console.log(err)
+      })
+      setFilter('')
+      setNewName('')
+      setNewNumber('')
     } 
   }
   
