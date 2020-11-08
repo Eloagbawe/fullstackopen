@@ -8,6 +8,7 @@ import personService from './services/persons.js';
 import Notification from './components/notification.js';
 
 
+
 const App = () => {
 
   const [ persons, setPersons ] = useState([]) 
@@ -120,12 +121,20 @@ const App = () => {
     if (window.confirm(`Delete ${personObject.name} ?`)){
       personService
       .deleteId(id) 
-      setMessage(`Deleted ${personObject.name}`)
+      .then(res => {
+        setMessage(`Deleted ${personObject.name}`)
           setPropertyName('success')
           setTimeout(() => {
             setMessage(null)
           }, 5000)
-
+      })
+      .catch(err => {
+        setMessage(`Information of ${personObject.name} has already been removed from server`)
+        setPropertyName('fail')
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      })
           setPersons(persons.filter(person => person.id !== id))
           setFilteredNames(filteredNames.filter(name => name.id !== id))
     }
