@@ -7,7 +7,6 @@ const Persons = ({ filteredNames, deleteName }) => {
           <li key={person.name}>{person.name} {person.number} <button onClick = {() => deleteName(person.id)}>Delete</button></li>
         )}
     </ul>
-    // 
     )
   }
 

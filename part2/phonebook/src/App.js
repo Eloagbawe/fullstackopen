@@ -116,19 +116,12 @@ const App = () => {
     const personObject = persons.find(person => person.id === id)
     if (window.confirm(`Delete ${personObject.name} ?`)){
       personService
-      .get(id)
-      .then(res => {
-        if (res.length === 0){
-          setMessage(`Information of ${personObject.name} has already been removed from server`)
-          setPropertyName('fail')
+      .deleteId(id) 
+      setMessage(`Deleted ${personObject.name}`)
+          setPropertyName('success')
           setTimeout(() => {
             setMessage(null)
           }, 5000)
-        }  
-      })
-
-      personService
-      .deleteId(id) 
     }
     
     setPersons(persons.filter(person => person.id !== id))

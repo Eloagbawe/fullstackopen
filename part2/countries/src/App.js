@@ -62,7 +62,7 @@ const App = () => {
         }
           
         else if(search.length === 0){
-          setFilteredCountries(<p>Sorry Nothing matches your search, try another input</p>)
+          setFilteredCountries(<p>Sorry nothing matches your search, try another input</p>)
         }
 
         else if(search.length <= 10){
