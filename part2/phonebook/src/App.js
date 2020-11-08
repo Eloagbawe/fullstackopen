@@ -122,10 +122,10 @@ const App = () => {
           setTimeout(() => {
             setMessage(null)
           }, 5000)
+
+          setPersons(persons.filter(person => person.id !== id))
+          setFilteredNames(filteredNames.filter(name => name.id !== id))
     }
-    
-    setPersons(persons.filter(person => person.id !== id))
-    setFilteredNames(filteredNames.filter(name => name.id !== id))
     }
     
   return (
