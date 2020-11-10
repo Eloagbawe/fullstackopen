@@ -42,7 +42,7 @@ const App = () => {
   
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
-    const regex = new RegExp(`^${event.target.value}`,"i")
+    const regex = new RegExp(`${event.target.value}`,"i")
     setFilteredNames(persons.filter(person => regex.test(person.name)))
 }
 
@@ -69,7 +69,9 @@ const App = () => {
     else if (foundName){
 
       if (window.confirm(`${newName} is already added to phonebook, replace old number with a new one?`)){
+        
         const changedName = {...foundName, number: newNumber}
+
         personService
         .update(foundName.id, changedName)
         .then(returnedName => {
@@ -83,11 +85,13 @@ const App = () => {
         })
         .catch(err => {
           console.log(err)
-        setMessage(`Information of ${personObject.name} has already been removed from server`)
-        setPropertyName('fail')
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
+          setMessage(`Information of ${personObject.name} has already been removed from server`)
+          setPropertyName('fail')
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+          setPersons(persons.filter(person => person.id !== foundName.id))
+          setFilteredNames(filteredNames.filter(name => name.id !== foundName.id))
       })
       }
         setNewName('')
@@ -96,6 +100,7 @@ const App = () => {
     
     
     else {
+
       personService
       .create(personObject)
       .then(returnedPersonObject => {
@@ -117,7 +122,9 @@ const App = () => {
   }
   
   const deleteName = (id) => {
+
     const personObject = persons.find(person => person.id === id)
+
     if (window.confirm(`Delete ${personObject.name} ?`)){
       personService
       .deleteId(id) 

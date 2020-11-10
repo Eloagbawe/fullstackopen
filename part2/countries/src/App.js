@@ -51,11 +51,11 @@ const App = () => {
           })) 
         }
           
-        else if(search.length === 0){
+        else if (search.length === 0){
           setFilteredCountries(<p>Sorry nothing matches your search, try another input</p>)
         }
 
-        else if(search.length <= 10){
+        else if (search.length <= 10){
           setFilteredCountries(search.map(country => { 
             return <p key = {country.name}>{country.name} <button onClick={() => show(country)
             }>Show</button></p>
