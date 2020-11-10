@@ -7,7 +7,7 @@ const CountryDetails = ({country}) => {
     const accessKey = process.env.REACT_APP_ACCESS_KEY
 
 
-
+    //Request to get the weather details of the country capital
     useEffect(() => {
         axios
           .get(`http://api.weatherstack.com/current?access_key=${accessKey}&query=${country.capital}`)

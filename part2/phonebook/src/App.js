@@ -19,7 +19,7 @@ const App = () => {
   const [ message, setMessage ] = useState(null) 
   const [ propertyName, setPropertyName ] = useState('')
 
-
+  //Request to get data from the server
   useEffect(() => {
     personService
     .getAll()
@@ -30,23 +30,28 @@ const App = () => {
     .catch(err => console.log(err))
   },[])
   
-  
-
+  //Function to handle changes in the name input
   const handleNameChange = (event) => {
         setNewName(event.target.value)
   }
 
+  //Function to handle changes in the number input
   const handleNumberChange = (event) =>{
         setNewNumber(event.target.value)
   }
   
+  //Function to handle changes in the filter input
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
+
+    //Getting the regex pattern to filter the search
     const regex = new RegExp(`${event.target.value}`,"i")
+
+    //Setting filteredNames to entries that match the search
     setFilteredNames(persons.filter(person => regex.test(person.name)))
 }
 
-
+  //Function to add an entry
   const addName = (event) => {
     event.preventDefault()
 
@@ -54,7 +59,8 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-
+    
+    //Checking if new entry is already in the phonebook
     const foundName = persons.find(person => person.name === newName)
 
     if ((newNumber === '...a new number' || newNumber === '') && (newName === '...a new name' || newName === '')){
@@ -71,7 +77,8 @@ const App = () => {
       if (window.confirm(`${newName} is already added to phonebook, replace old number with a new one?`)){
         
         const changedName = {...foundName, number: newNumber}
-
+        
+        //Request to update a person's number if name is already in phonebook
         personService
         .update(foundName.id, changedName)
         .then(returnedName => {
@@ -100,7 +107,8 @@ const App = () => {
     
     
     else {
-
+      
+      //Request to create a new entry
       personService
       .create(personObject)
       .then(returnedPersonObject => {
@@ -121,11 +129,14 @@ const App = () => {
     } 
   }
   
+  //Function to delete an entry
   const deleteName = (id) => {
 
     const personObject = persons.find(person => person.id === id)
 
     if (window.confirm(`Delete ${personObject.name} ?`)){
+
+      //Request to delete an entry from the phonebook
       personService
       .deleteId(id) 
       .then(res => {
