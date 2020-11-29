@@ -22,6 +22,25 @@ const favoriteBlog = array => {
   return array.find(item => item.likes === maxLikes)
 }
 const mostBlogs = array => {
+  const authors = array.map((blog) => blog.author)
+const uniqueAuthors = authors.filter((author, index) => authors.indexOf(author) === index)
+const blogCount = uniqueAuthors.map(author => {
+    return {
+        "name": author,
+        "blogs": 0
+    }
+})
+
+for (var j = 0; j < blogCount.length; j++){
+   for (var k = 0; k < authors.length; k++){
+       if (blogCount[j].name === authors[k]){
+           blogCount[j].blogs ++
+       }
+   }
+}
+
+const count = Math.max(...blogCount.map(value => value.blogs))
+const maxBlogs = blogCount.find(value => value.blogs === count)
 
 }
 module.exports = {
