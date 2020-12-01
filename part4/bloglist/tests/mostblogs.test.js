@@ -1,6 +1,7 @@
 const listHelper = require('../utils/list_helper')
 
-describe('favorite blog', () => {
+describe('most blogs', () => {
+
     const listWithManyBlogs = [ 
         { 
             _id: "5a422a851b54a676234d17f7", 
@@ -51,14 +52,11 @@ describe('favorite blog', () => {
              __v: 0 
             }
     ]
-
     test('when list has many blogs, it is calculated right', () => {
-        const result = listHelper.favoriteBlog(listWithManyBlogs)
+        const result = listHelper.mostBlogs(listWithManyBlogs)
         expect(result).toEqual({ 
-            title: "Canonical string reduction", 
-            author: "Edsger W. Dijkstra",  
-            likes: 12
+            author: "Robert C. Martin", 
+            blogs: 3
         })
     })
-
 })
