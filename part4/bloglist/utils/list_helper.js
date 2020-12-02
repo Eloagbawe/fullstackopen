@@ -30,7 +30,7 @@ const mostBlogs = array => {
   const authors = _.map(array, (n) => { return {'author': n.author}})
   const groupedAuthors = _.groupBy(authors,'author');
   const blogCount = _.map(groupedAuthors, (n) => {
-    const uniqueName = (_.find(n,'author'))
+    const uniqueName = (_.sample(n))
       return {
         "author": uniqueName.author,
         "blogs": n.length
@@ -44,8 +44,8 @@ const mostLikes = array => {
   const authors = _.map(array, (n) => { return {'author': n.author,"likes": n.likes}})
   const groupedAuthors = _.groupBy(authors,'author');
   const likesCount = _.map(groupedAuthors, (n) => {
-    const uniqueName = (_.find(n,'author'))
-    const sum = (total, n) =>{
+    const uniqueName = (_.sample(n))
+    const sum = (total, n) => {
       return total + n.likes
     }
     const sumLikes = _.reduce(n,sum,0)
