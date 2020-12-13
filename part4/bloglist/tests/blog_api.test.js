@@ -37,24 +37,30 @@ beforeEach(async () => {
 
 })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+describe('When initially some blogs are saved', () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
+
+  test('correct amount of blog posts are returned', async () => {
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(initialBlogs.length)
+  })
+
 })
 
-test('correct amount of blog posts are returned', async () => {
-  const response = await api.get('/api/blogs')
-  expect(response.body).toHaveLength(initialBlogs.length)
-})
 
 test('Blog posts have a unique identifier named id', async () => {
   const response = await api.get('/api/blogs')
   response.body.forEach(blog => expect(blog.id).toBeDefined())
 })
 
-test('A valid blog can be added', async() =>{
+describe('addition of a new blog', () => {
+
+  test('suceeds with valid data', async() =>{
     const newBlog = {
       "title": "My fourth Blog post",
       "author": "Barry White",
@@ -73,36 +79,42 @@ test('A valid blog can be added', async() =>{
 
     const blogTitles = response.body.map(blog => blog.title)
     expect(blogTitles).toContain("My fourth Blog post")
+  })
+
+  test('with the likes property absent, it defaults to the value 0', async() => {
+    const newBlog = {
+      "title": "My fourth Blog post",
+      "author": "Barry White",
+      "url": "url"
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+  
+    const response = await api.get('/api/blogs')
+    const newAdd = response.body.find(blog => blog.author === "Barry White")
+    expect(newAdd.likes).toBe(0)  
+  })
+
+  test('fails with status code 400 if the likes and url property are absent in the request', async() => {
+    const newBlog = {
+      "author": "Barry White",
+      "likes": 53
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+  })
+
 })
 
-test('If the likes property is missing from a post request, it defaults to the value 0', async() => {
-  const newBlog = {
-    "title": "My fourth Blog post",
-    "author": "Barry White",
-    "url": "url"
-  }
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
 
-  const response = await api.get('/api/blogs')
-  const newAdd = response.body.find(blog => blog.author === "Barry White")
-  expect(newAdd.likes).toBe(0)  
-})
 
-test('If the title and url is missing from a post request,the backend responds with a 400 bad request status code', async() => {
-  const newBlog = {
-    "author": "Barry White",
-    "likes": 53
-  }
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(400)
-    .expect('Content-Type', /application\/json/)
-})
+
 afterAll(() => {
   mongoose.connection.close()
 })
