@@ -36,8 +36,8 @@ beforeEach(async () => {
   await blogObject.save()
 
 })
-
 describe('When initially some blogs are saved', () => {
+
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
@@ -60,7 +60,7 @@ test('Blog posts have a unique identifier named id', async () => {
 
 describe('addition of a new blog', () => {
 
-  test('suceeds with valid data', async() =>{
+  test('succeeds with valid data', async() =>{
     const newBlog = {
       "title": "My fourth Blog post",
       "author": "Barry White",
@@ -112,7 +112,42 @@ describe('addition of a new blog', () => {
 
 })
 
+describe('deleting a blog', () => {
 
+  test('succeeds with a valid id', async() => {
+    const blogsAtStart = await api.get('/api/blogs')
+    const blogToDelete = blogsAtStart.body[0]
+
+    await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+    const blogsAtEnd = await api.get('/api/blogs')
+    expect(blogsAtEnd.body).toHaveLength(initialBlogs.length - 1)
+    
+    const authors = blogsAtEnd.body.map(blog => blog.author)
+    expect(authors).not.toContain(blogToDelete.author)
+ })
+})
+
+describe('updating a blog', () => {
+
+  test('succeeds with a valid id', async() => { 
+    const blogs = await api.get('/api/blogs')
+    const blogToBeUpdated = blogs.body[0]
+    const blog = {
+      "title": "My first Blog post",
+      "author": "Jess Day",
+      "url": "url",
+      "likes": 18
+    }
+    
+    await api
+    .put(`/api/blogs/${blogToBeUpdated.id}`, blog, { new: true, runValidators: true })
+    .expect(200)
+
+  })
+})
 
 
 afterAll(() => {

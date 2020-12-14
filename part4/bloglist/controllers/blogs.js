@@ -8,8 +8,8 @@ blogsRouter.get('/', async (req, res, next) => {
   }catch(err){
    next(err)
   }
-  
 })
+
   
 blogsRouter.post('/', async (req, res, next) => {
     const body = req.body
