@@ -36,6 +36,7 @@ beforeEach(async () => {
   await blogObject.save()
 
 })
+
 describe('When initially some blogs are saved', () => {
 
   test('blogs are returned as json', async () => {
@@ -50,12 +51,11 @@ describe('When initially some blogs are saved', () => {
     expect(response.body).toHaveLength(initialBlogs.length)
   })
 
-})
+  test('Blog posts have a unique identifier named id', async () => {
+    const response = await api.get('/api/blogs')
+    response.body.forEach(blog => expect(blog.id).toBeDefined())
+  })
 
-
-test('Blog posts have a unique identifier named id', async () => {
-  const response = await api.get('/api/blogs')
-  response.body.forEach(blog => expect(blog.id).toBeDefined())
 })
 
 describe('addition of a new blog', () => {
