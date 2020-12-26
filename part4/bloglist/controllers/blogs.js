@@ -4,7 +4,7 @@ const User = require('../models/user')
 
 blogsRouter.get('/', async (req, res, next) => {
   try {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate('user')
     res.json(blogs)
   }catch(err){
    next(err)
