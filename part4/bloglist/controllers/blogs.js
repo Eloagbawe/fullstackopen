@@ -5,7 +5,7 @@ const User = require('../models/user')
 
 blogsRouter.get('/', async (req, res, next) => {
   try {
-    const blogs = await Blog.find({}).populate('user')
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
     res.json(blogs)
   }catch(err){
    next(err)
@@ -22,12 +22,7 @@ const getTokenFrom = request => {
   
 blogsRouter.post('/', async (req, res, next) => {
   const body = req.body
-  const token = getTokenFrom(request)
-  const decodedToken = jwt.verify(token, process.env.SECRET)
-  if (!token || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  
     //const user = await User.findById(body.userId)
   try {
     if (!body.title || !body.url){
@@ -36,6 +31,12 @@ blogsRouter.post('/', async (req, res, next) => {
       })
     }
     else {
+      const token = getTokenFrom(req)
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+  if (!token || !decodedToken.id) {
+    return res.status(401).json({ error: 'token missing or invalid' })
+  }
+  const user = await User.findById(decodedToken.id)
       const blog = new Blog({
         "title":body.title,
         "author": body.author,
