@@ -14,7 +14,7 @@ const unknownEndpoint = (request, response) => {
 const tokenExtractor = (request,response,next) => {
   const authorization = request.get('authorization')
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
+    request.token =  authorization.substring(7)
   }
   next()
 }
