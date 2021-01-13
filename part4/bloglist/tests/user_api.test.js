@@ -7,17 +7,18 @@ const bcrypt = require('bcrypt')
 const User = require('../models/user')
 
 
-beforeEach(async () => {
-  await User.deleteMany({})
-
-  const passwordHash = await bcrypt.hash('sekret', 10)
-  const user = new User({ username: 'root', passwordHash })
-
-  await user.save()
-})
 
 describe('when there is initially one user in db', () => {
-    
+
+  beforeEach(async () => {
+    await User.deleteMany({})
+  
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+  
+    await user.save()
+  })
+  
     test('creation succeeds with a fresh username', async () => {
       let usersAtStart = await User.find({})
       usersAtStart = usersAtStart.map(u => u.toJSON())
@@ -39,7 +40,7 @@ describe('when there is initially one user in db', () => {
       expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
   
       const usernames = usersAtEnd.map(u => u.username)
-      expect(usernames).toContain(newUser.username)
+      expect(usernames).toContainEqual(newUser.username)
     })
   })
 
