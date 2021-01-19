@@ -41,6 +41,13 @@ describe('when there is initially one user in db', () => {
       const usernames = usersAtEnd.map(u => u.username)
       expect(usernames).toContainEqual(newUser.username)
     })
+
+    test('fails with status code 400 if user is invalid', async () => {
+      const newUser = {
+        
+      }
+
+    })
   })
 
 afterAll(() => {
