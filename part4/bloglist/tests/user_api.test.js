@@ -42,11 +42,16 @@ describe('when there is initially one user in db', () => {
       expect(usernames).toContainEqual(newUser.username)
     })
 
-    test('fails with status code 400 if user is invalid', async () => {
+    test('fails with status code 400 if username is invalid', async () => {
       const newUser = {
-        
+        username: 'al',
+        name: 'Matti Luukkainen',
+        password: 'salanien',
       }
-
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
     })
   })
 
