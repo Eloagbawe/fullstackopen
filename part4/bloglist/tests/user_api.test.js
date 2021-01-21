@@ -42,11 +42,34 @@ describe('when there is initially one user in db', () => {
       expect(usernames).toContainEqual(newUser.username)
     })
 
+    test('fails with status code 400 if username already exists', async () => {
+      const newUser = {
+        username: 'root',
+        name: 'Matti Luukkainen',
+        password: 'salanien',
+      }
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+    })
+
     test('fails with status code 400 if username is invalid', async () => {
       const newUser = {
         username: 'al',
         name: 'Matti Luukkainen',
         password: 'salanien',
+      }
+      await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+    })
+    test('fails with status code 400 if password is invalid', async () => {
+      const newUser = {
+        username: 'mluukkai',
+        name: 'Matti Luukkainen',
+        password: 'sa',
       }
       await api
         .post('/api/users')
