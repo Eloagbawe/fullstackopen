@@ -52,6 +52,14 @@ describe('when there is initially one user in db', () => {
         .post('/api/users')
         .send(newUser)
         .expect(400)
+
+        expect(async() => {
+          await api
+          .post('/api/users')
+          .send(newUser)
+          .toThrow(`User validation failed: username: Error, expected ``username`` to be unique. Value: ${newUser.username}`)
+        })
+        
     })
 
     test('fails with status code 400 if username is invalid', async () => {
@@ -64,6 +72,14 @@ describe('when there is initially one user in db', () => {
         .post('/api/users')
         .send(newUser)
         .expect(400)
+  
+
+        expect(async () =>{
+          await api
+          .post('/api/users')
+          .send(newUser)
+          .toThrow(`User validation failed: username: Path ``username`` ${newUser.username} is shorter than the minimum allowed length (3).`)
+        })
     })
     test('fails with status code 400 if password is invalid', async () => {
       const newUser = {
