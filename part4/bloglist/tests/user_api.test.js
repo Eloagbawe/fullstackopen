@@ -91,6 +91,13 @@ describe('when there is initially one user in db', () => {
         .post('/api/users')
         .send(newUser)
         .expect(400)
+        
+        expect(async () =>{
+          await api
+          .post('/api/users')
+          .send(newUser)
+          .toThrow(`Password length should be longer than 3 characters`)
+        })
     })
   })
 
