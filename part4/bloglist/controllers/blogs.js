@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const jwt = require('jsonwebtoken')
+const userExtractor = require('../utils/middleware').userExtractor
 
 blogsRouter.get('/', async (req, res, next) => {
   try {
@@ -13,7 +14,7 @@ blogsRouter.get('/', async (req, res, next) => {
 })
 
   
-blogsRouter.post('/', async (req, res, next) => {
+blogsRouter.post('/', userExtractor, async (req, res, next) => {
   const body = req.body
   
   try {
@@ -24,11 +25,13 @@ blogsRouter.post('/', async (req, res, next) => {
     }
     else {
       
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-  if (!req.token || !decodedToken.id) {
-    return res.status(401).json({ error: 'token missing or invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  // const decodedToken = jwt.verify(req.token, process.env.SECRET)
+  // if (!req.token || !decodedToken.id) {
+  //   return res.status(401).json({ error: 'token missing or invalid' })
+  // }
+  // const user = await User.findById(decodedToken.id)
+
+  const user = await User.findById(req.user.id)
       const blog = new Blog({
         "title":body.title,
         "author": body.author,
@@ -64,14 +67,15 @@ blogsRouter.post('/', async (req, res, next) => {
       } 
   })
 
-  blogsRouter.delete('/:id', async(req, res, next) => {
+  blogsRouter.delete('/:id', userExtractor, async(req, res, next) => {
     try{
-      const decodedToken = jwt.verify(req.token, process.env.SECRET)
+      // const decodedToken = jwt.verify(req.token, process.env.SECRET)
       const blogToBeDeleted = await Blog.findById(req.params.id)
-      const user = await User.findById(decodedToken.id)
-      if (!req.token || !decodedToken.id) {
-        return res.status(401).json({ error: 'token missing or invalid' })
-      }
+      // const user = await User.findById(decodedToken.id)
+      const user = await User.findById(req.user.id)
+      // if (!req.token || !decodedToken.id) {
+      //   return res.status(401).json({ error: 'token missing or invalid' })
+      // }
       if ( blogToBeDeleted.user.toString() === user._id.toString() ){
         await Blog.deleteOne(blogToBeDeleted)
         res.status(204).end()
