@@ -9,21 +9,43 @@ const initialBlogs = [
     "title": "My first Blog post",
     "author": "Jess Day",
     "url": "url",
-    "likes": 10
+    "likes": 12
   },
   {
     "title": "My second Blog post",
     "author": "Nick Winston",
     "url": "url",
-    "likes": 26
+    "likes": 16
   },
   {
     "title": "My third Blog post",
     "author": "Cece Gates",
     "url": "url",
-    "likes": 13
+    "likes": 9
   }
 ]
+
+let token;
+
+beforeAll( async () => {
+  const login = await api
+      .post("/api/login")
+      .send({ username: "root", password: "sekret" })
+      .expect(200);
+    
+  token = login.body.token;
+})
+
+
+// const getToken = async() => {
+//   const login = await api
+//       .post("/api/login")
+//       .send({ username: "root", password: "sekret" })
+//       .expect(200);
+    
+//       return login.body.token;
+// }
+// const token = await getToken()
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -70,6 +92,7 @@ describe('addition of a new blog', () => {
     await api
     .post('/api/blogs')
     .send(newBlog)
+    .set("Authorization", `bearer ${token}`)
     .expect(201)
     .expect('Content-Type', /application\/json/)
 
@@ -89,6 +112,7 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set("Authorization", `bearer ${token}`)
       .expect(201)
       .expect('Content-Type', /application\/json/)
   
@@ -105,29 +129,28 @@ describe('addition of a new blog', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
+      .set("Authorization", `bearer ${token}`)
       .expect(400)
       .expect('Content-Type', /application\/json/)
   })
 
-})
-
-describe('deleting a blog', () => {
-
-  test('succeeds with a valid id', async() => {
-    const blogsAtStart = await api.get('/api/blogs')
-    const blogToDelete = blogsAtStart.body[0]
+  test("fails with status 401 if token is absent in the request", async () => {
+    const newBlog = {
+      title: "Patience",
+      url: "url",
+      author: "Dru Phillips",
+      likes: 8,
+    };
 
     await api
-    .delete(`/api/blogs/${blogToDelete.id}`)
-    .expect(204)
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(401)
+      .expect("Content-Type", /application\/json/);
+  });
 
-    const blogsAtEnd = await api.get('/api/blogs')
-    expect(blogsAtEnd.body).toHaveLength(initialBlogs.length - 1)
-    
-    const authors = blogsAtEnd.body.map(blog => blog.author)
-    expect(authors).not.toContain(blogToDelete.author)
- })
 })
+
 
 describe('updating a blog', () => {
 
@@ -146,6 +169,27 @@ describe('updating a blog', () => {
     .expect(200)
 
   })
+})
+
+describe('deleting a blog', () => {
+
+  test('succeeds with a valid id', async() => {
+
+    const blogsAtStart = await api.get('/api/blogs')
+    const blogToDelete = blogsAtStart.body[0]
+
+    await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .set('Authorization', `bearer ${token}`)
+    .expect(204)
+
+
+    const blogsAtEnd = await api.get('/api/blogs')
+    expect(blogsAtEnd.body).toHaveLength(initialBlogs.length - 1)
+    
+    const authors = blogsAtEnd.body.map(blog => blog.author)
+    expect(authors).not.toContain(blogToDelete.author)
+ })
 })
 
 
