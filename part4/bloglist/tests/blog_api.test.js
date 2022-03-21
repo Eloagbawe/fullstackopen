@@ -3,6 +3,11 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const jwt = require('jsonwebtoken')
+
+let token;
+let users;
 
 const initialBlogs = [
   {
@@ -15,39 +20,32 @@ const initialBlogs = [
     "title": "My second Blog post",
     "author": "Nick Winston",
     "url": "url",
-    "likes": 16
+    "likes": 16  
   },
   {
     "title": "My third Blog post",
     "author": "Cece Gates",
     "url": "url",
     "likes": 9
+
   }
 ]
 
-let token;
+
 
 beforeAll( async () => {
   const login = await api
       .post("/api/login")
       .send({ username: "root", password: "sekret" })
       .expect(200);
-    
+
   token = login.body.token;
+  users = await User.find({})
 })
 
 
-// const getToken = async() => {
-//   const login = await api
-//       .post("/api/login")
-//       .send({ username: "root", password: "sekret" })
-//       .expect(200);
-    
-//       return login.body.token;
-// }
-// const token = await getToken()
-
 beforeEach(async () => {
+  initialBlogs.forEach(blog => blog.user = users[0].id)
   await Blog.deleteMany({})
   let blogObject = new Blog(initialBlogs[0])
   await blogObject.save()
@@ -82,6 +80,8 @@ describe('When initially some blogs are saved', () => {
 describe('addition of a new blog', () => {
 
   test('succeeds with valid data', async() =>{
+
+    const user = await api.get('/api/users')
     const newBlog = {
       "title": "My fourth Blog post",
       "author": "Barry White",
@@ -177,7 +177,6 @@ describe('deleting a blog', () => {
 
     const blogsAtStart = await api.get('/api/blogs')
     const blogToDelete = blogsAtStart.body[0]
-
     await api
     .delete(`/api/blogs/${blogToDelete.id}`)
     .set('Authorization', `bearer ${token}`)

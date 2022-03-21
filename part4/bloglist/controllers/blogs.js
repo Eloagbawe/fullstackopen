@@ -71,11 +71,20 @@ blogsRouter.post('/', userExtractor, async (req, res, next) => {
     try{
       const blogToBeDeleted = await Blog.findById(req.params.id)
       const user = await User.findById(req.user.id)
-      
-      if ( blogToBeDeleted.user.toString() === user._id.toString() ){
-        await Blog.deleteOne(blogToBeDeleted)
+
+      // console.log(blogToBeDeleted.user.toString() === user.id.toString())
+
+      if(blogToBeDeleted.user.toString() === user.id.toString()){
+        await Blog.findByIdAndRemove(req.params.id)
         res.status(204).end()
       }
+      
+      // if ( blogToBeDeleted.user.toString() === user.id.toString()){
+      //   // await Blog.deleteOne(blogToBeDeleted)
+      //   await Blog.findByIdAndRemove(req.params.id)
+
+      //   res.status(204).end()
+      // }
       
     }catch(err){
       next(err)
