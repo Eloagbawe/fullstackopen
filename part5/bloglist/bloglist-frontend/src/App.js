@@ -6,6 +6,11 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  //const [newBlog, setNewBlog] = useState('')
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
+  //const [showAll, setShowAll] = useState(true)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [errorMessage, setErrorMessage] = useState(null)
@@ -61,6 +66,9 @@ const App = () => {
     setUser(null)
   }
 
+  const createBlog = (event) => {
+    event.preventDefault()
+  }
 
   if (user === null) {
     return (
@@ -96,6 +104,42 @@ const App = () => {
       <h2>blogs</h2>
      <p> {user.username} is logged in</p>     
      <button type="submit" onClick={handleLogout}>logout</button>
+
+     
+     <form onSubmit={createBlog}>
+        <div>
+          title:
+            <input
+            type="text"
+            value={title}
+            name="title"
+            onChange={({ target }) => setTitle(target.value)}
+          />
+        </div>
+        <div>
+          author:
+            <input
+            type="text"
+            value={author}
+            name="author"
+            onChange={({ target }) => setAuthor(target.value)}
+          />
+        </div>
+
+        <div>
+          url:
+            <input
+            type="text"
+            value={url}
+            name="Title"
+            onChange={({ target }) => setUrl(target.value)}
+          />
+        </div>
+        
+        <button type="submit">create</button>
+      </form>
+      
+      <br/>
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
