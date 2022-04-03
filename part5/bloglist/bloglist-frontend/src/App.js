@@ -68,6 +68,9 @@ const App = () => {
 
   const createBlog = (event) => {
     event.preventDefault()
+    setTitle('')
+    setAuthor('')
+    setUrl('')
   }
 
   if (user === null) {
