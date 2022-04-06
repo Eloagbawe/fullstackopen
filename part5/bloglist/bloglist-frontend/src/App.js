@@ -66,11 +66,23 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = (event) => {
+  const createBlog = async (event) => {
     event.preventDefault()
-    setTitle('')
-    setAuthor('')
-    setUrl('')
+    try {
+      const blog = await blogService.create({
+        title,
+        author,
+        url
+      })
+      blogs.push(blog)
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+    }
+    catch(error){
+      console.log(error)
+    }
+    
   }
 
   if (user === null) {
@@ -109,6 +121,7 @@ const App = () => {
      <button type="submit" onClick={handleLogout}>logout</button>
 
      
+     <h2>create new</h2>
      <form onSubmit={createBlog}>
         <div>
           title:
