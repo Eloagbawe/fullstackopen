@@ -74,7 +74,7 @@ const App = () => {
         author,
         url
       })
-      blogs.push(blog)
+      setBlogs(blogs.concat(blog))
       setTitle('')
       setAuthor('')
       setUrl('')
