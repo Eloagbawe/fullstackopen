@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import './index.css'
 import Blog from './components/Blog'
+import Notification from './components/notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -13,7 +15,8 @@ const App = () => {
   //const [showAll, setShowAll] = useState(true)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
+  const [propertyName, setPropertyName] = useState('')
   const [user, setUser] = useState(null)
 
 
@@ -51,9 +54,10 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setMessage('wrong username or password')
+      setPropertyName('fail')
       setTimeout(() => {
-        setErrorMessage(null)
+        setMessage(null)
       }, 5000)
     }
 
@@ -78,6 +82,11 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
+      setMessage(`a new blog ${title} by ${author} added`)
+      setPropertyName('success')
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
     }
     catch(error){
       console.log(error)
@@ -88,6 +97,7 @@ const App = () => {
   if (user === null) {
     return (
       <div>
+        <Notification message = {message} propertyName = {propertyName}/>
         <h2>Log in to application</h2>
         <form onSubmit={handleLogin}>
         <div>
@@ -116,7 +126,8 @@ const App = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
+    <Notification message = {message} propertyName = {propertyName}/>
+    <h2>blogs</h2>
      <p> {user.username} is logged in</p>     
      <button type="submit" onClick={handleLogout}>logout</button>
 
