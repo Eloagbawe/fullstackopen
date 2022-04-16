@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './index.css'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
 import Notification from './components/notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -132,7 +133,7 @@ const App = () => {
      <button type="submit" onClick={handleLogout}>logout</button>
 
      
-     <h2>create new</h2>
+     {/* <h2>create new</h2>
      <form onSubmit={createBlog}>
         <div>
           title:
@@ -164,7 +165,8 @@ const App = () => {
         </div>
         
         <button type="submit">create</button>
-      </form>
+      </form> */}
+        <BlogForm createBlog={createBlog} />
       
       <br/>
 
