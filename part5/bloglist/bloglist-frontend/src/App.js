@@ -95,8 +95,7 @@ const App = () => {
     
   }
 
-  const BlogForm = () => {
-    return(
+  const BlogForm = () => (
       <div>
     <h2>create new</h2> 
     <form onSubmit={createBlog}>
@@ -133,10 +132,11 @@ const App = () => {
   </form>
   </div>
     )
-  }
+  
 
-  const LoginForm = () => {
-    return (
+  const LoginForm = () => (
+      <div>
+      <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
       <div>
         username
@@ -158,35 +158,27 @@ const App = () => {
       </div>
       <button type="submit">login</button>
     </form>
+    </div>
     )
-    
-  }
-
-  if (user === null) {
     return (
       <div>
         <Notification message = {message} propertyName = {propertyName}/>
-        <h2>Log in to application</h2>
-        <LoginForm/>
+        {user == null ? ( LoginForm())
+          : (
+          <div>
+            <h2>blogs</h2>
+            <p> {user.username} is logged in</p>     
+            <button type="submit" onClick={handleLogout}>logout</button>
+            {BlogForm()}
+            <br/>
+            <div>
+              {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} /> )}
+            </div>
+          </div>
+        )}
       </div>
     )
-  }
-
-  return (
-    <div>
-    <Notification message = {message} propertyName = {propertyName}/>
-    <h2>blogs</h2>
-     <p> {user.username} is logged in</p>     
-     <button type="submit" onClick={handleLogout}>logout</button>
-        <BlogForm />
-      <br/>
-
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-
-    </div>
-  )
 
 }
 
