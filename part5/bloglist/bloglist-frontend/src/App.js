@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import './index.css'
 import Blog from './components/Blog'
 // import BlogForm from './components/BlogForm'
+//import LoginForm from './components/LoginForm'
 import Notification from './components/notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -19,6 +20,8 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [propertyName, setPropertyName] = useState('')
   const [user, setUser] = useState(null)
+  //const [loginVisible, setLoginVisible] = useState(false)
+
 
 
 
