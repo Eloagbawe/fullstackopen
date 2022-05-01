@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import './index.css'
 import Blog from './components/Blog'
-// import BlogForm from './components/BlogForm'
-//import LoginForm from './components/LoginForm'
 import Notification from './components/notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
+
 
 
 const App = () => {
@@ -98,81 +99,27 @@ const App = () => {
     
   }
 
-  const BlogForm = () => (
-      <div>
-    <h2>create new</h2> 
-    <form onSubmit={createBlog}>
-    <div>
-      title:
-        <input
-        type="text"
-        value={title}
-        name="title"
-        onChange={({ target }) => setTitle(target.value)}
-      />
-    </div>
-    <div>
-      author:
-        <input
-        type="text"
-        value={author}
-        name="author"
-        onChange={({ target }) => setAuthor(target.value)}
-      />
-    </div>
-
-    <div>
-      url:
-        <input
-        type="text"
-        value={url}
-        name="Title"
-        onChange={({ target }) => setUrl(target.value)}
-      />
-    </div>
-    
-    <button type="submit">create</button>
-  </form>
-  </div>
+  const blogForm = () => (
+     <BlogForm setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl}
+     title={title} author={author} url={url} createBlog={createBlog}/>
     )
   
 
-  const LoginForm = () => (
-      <div>
-      <h2>Log in to application</h2>
-      <form onSubmit={handleLogin}>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-    </div>
+  const loginForm = () => (
+    <LoginForm setUsername={setUsername} setPassword={setPassword} 
+    handleLogin={handleLogin} username={username} password={password}/>
     )
+    
     return (
       <div>
         <Notification message = {message} propertyName = {propertyName}/>
-        {user == null ? ( LoginForm())
+        {user == null ? ( loginForm())
           : (
           <div>
             <h2>blogs</h2>
             <p> {user.username} is logged in</p>     
             <button type="submit" onClick={handleLogout}>logout</button>
-            {BlogForm()}
+            {blogForm()}
             <br/>
             <div>
               {blogs.map(blog =>
