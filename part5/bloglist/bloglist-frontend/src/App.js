@@ -6,22 +6,22 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  //const [newBlog, setNewBlog] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  // const [title, setTitle] = useState('')
+  // const [author, setAuthor] = useState('')
+  // const [url, setUrl] = useState('')
   //const [showAll, setShowAll] = useState(true)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [message, setMessage] = useState(null)
   const [propertyName, setPropertyName] = useState('')
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
+  // const [loginVisible, setLoginVisible] = useState(false)
 
 
 
@@ -75,53 +75,55 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = async (event) => {
-    event.preventDefault()
-    try {
-      const blog = await blogService.create({
-        title,
-        author,
-        url
-      })
-      setBlogs(blogs.concat(blog))
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      setMessage(`a new blog ${title} by ${author} added`)
+  const createBlog = (blogObject) => {
+    blogService.create(blogObject).then((returnedBlog) => {
+      setBlogs(blogs.concat(returnedBlog))
+      setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       setPropertyName('success')
       setTimeout(() => {
         setMessage(null)
       }, 5000)
-    }
-    catch(error){
+    }).catch((error) => {
       console.log(error)
-    }
+    })
+  
+    //async function
+    // try {
+    //   const blog = await blogService.create({
+    //     title,
+    //     author,
+    //     url
+    //   })
+    //   setBlogs(blogs.concat(blog))
+    //   setTitle('')
+    //   setAuthor('')
+    //   setUrl('')
+    //   setMessage(`a new blog ${title} by ${author} added`)
+    //   setPropertyName('success')
+    //   setTimeout(() => {
+    //     setMessage(null)
+    //   }, 5000)
+    // }
+    // catch(error){
+    //   console.log(error)
+    // }
     
   }
 
   const blogForm = () => (
-     <BlogForm setTitle={setTitle} setAuthor={setAuthor} setUrl={setUrl}
-     title={title} author={author} url={url} createBlog={createBlog}/>
+     <Togglable buttonLabel="new blog">
+       <BlogForm createBlog={createBlog}/>
+     </Togglable>
+    
     )
   
 
-  const loginForm = () => {
-    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-    const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
-    return(
-    <div>
-      <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>log in</button>
-      </div>
-      <div style={showWhenVisible}>
+  const loginForm = () => (
+      <Togglable buttonLabel="log in">
       <LoginForm setUsername={setUsername} setPassword={setPassword} 
-    handleLogin={handleLogin} username={username} password={password}/>
-      <button onClick={() => setLoginVisible(false)}>cancel</button>
-      </div>
-    </div>
-    
-    )}
+      handleLogin={handleLogin} username={username} password={password}/>
+      </Togglable>
+    )
     
     return (
       <div>
