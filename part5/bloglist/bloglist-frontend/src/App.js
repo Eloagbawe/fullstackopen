@@ -21,7 +21,7 @@ const App = () => {
   const [message, setMessage] = useState(null)
   const [propertyName, setPropertyName] = useState('')
   const [user, setUser] = useState(null)
-  //const [loginVisible, setLoginVisible] = useState(false)
+  const [loginVisible, setLoginVisible] = useState(false)
 
 
 
@@ -105,13 +105,27 @@ const App = () => {
     )
   
 
-  const loginForm = () => (
-    <LoginForm setUsername={setUsername} setPassword={setPassword} 
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+
+    return(
+    <div>
+      <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+      </div>
+      <div style={showWhenVisible}>
+      <LoginForm setUsername={setUsername} setPassword={setPassword} 
     handleLogin={handleLogin} username={username} password={password}/>
-    )
+      <button onClick={() => setLoginVisible(false)}>cancel</button>
+      </div>
+    </div>
+    
+    )}
     
     return (
       <div>
+        <h1>Blogs</h1>
         <Notification message = {message} propertyName = {propertyName}/>
         {user == null ? ( loginForm())
           : (
