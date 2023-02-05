@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,  useRef } from 'react'
 import './index.css'
 import Blog from './components/Blog'
 import Notification from './components/notification'
@@ -22,6 +22,8 @@ const App = () => {
   const [propertyName, setPropertyName] = useState('')
   const [user, setUser] = useState(null)
   // const [loginVisible, setLoginVisible] = useState(false)
+  const blogFormRef = useRef()
+
 
 
 
@@ -76,8 +78,10 @@ const App = () => {
   }
 
   const createBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedBlog) => {
-      setBlogs(blogs.concat(returnedBlog))
+      const newBlog = {...returnedBlog, user: {name: user.name}}
+      setBlogs(blogs.concat(newBlog))
       setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       setPropertyName('success')
       setTimeout(() => {
@@ -89,15 +93,8 @@ const App = () => {
   
     //async function
     // try {
-    //   const blog = await blogService.create({
-    //     title,
-    //     author,
-    //     url
-    //   })
+    //   const blog = await blogService.create(blogObject)
     //   setBlogs(blogs.concat(blog))
-    //   setTitle('')
-    //   setAuthor('')
-    //   setUrl('')
     //   setMessage(`a new blog ${title} by ${author} added`)
     //   setPropertyName('success')
     //   setTimeout(() => {
@@ -111,7 +108,7 @@ const App = () => {
   }
 
   const blogForm = () => (
-     <Togglable buttonLabel="new blog">
+     <Togglable buttonLabel="create new blog" ref={blogFormRef}>
        <BlogForm createBlog={createBlog}/>
      </Togglable>
     
@@ -133,7 +130,7 @@ const App = () => {
           : (
           <div>
             <h2>blogs</h2>
-            <p> {user.username} is logged in</p>     
+            <p> {user.name} is logged in</p>     
             <button type="submit" onClick={handleLogout}>logout</button>
             {blogForm()}
             <br/>
