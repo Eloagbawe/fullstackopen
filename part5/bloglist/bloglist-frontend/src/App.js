@@ -29,8 +29,10 @@ const App = () => {
 
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+    blogService.getAll().then(blogs => {
+      const sortedBlogs = blogs.sort(function(a, b) {return b.likes - a.likes})
+      setBlogs( sortedBlogs )
+    }
     )  
   }, [])
 
@@ -80,7 +82,8 @@ const App = () => {
   const createBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService.create(blogObject).then((returnedBlog) => {
-      const newBlog = {...returnedBlog, user: {name: user.name}}
+      const loggedInUser = {id: user.id, name: user.name, username: user.username}
+      const newBlog = {...returnedBlog, user: loggedInUser}
       setBlogs(blogs.concat(newBlog))
       setMessage(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
       setPropertyName('success')
@@ -121,7 +124,34 @@ const App = () => {
       handleLogin={handleLogin} username={username} password={password}/>
       </Togglable>
     )
+
+  const addLike = (blog) => {
+    const updatedBlog = {...blog, likes: blog.likes + 1, user: blog.user.id}
+    blogService.update(blog.id, updatedBlog).then((updatedBlog) => {
+      const updatedBlogs = blogs.map((item) => {
+        if (item.id === blog.id) {
+          item.likes += 1
+        }
+        return item
+      })
+      setBlogs(updatedBlogs)
+    }).catch((err) => {
+      console.log(err)
+    })
+  }
     
+  const deleteBlog = (blog) => {
+
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      blogService.deleteBlog(blog.id).then(() => {
+        const updatedBlogs = blogs.filter((item) => item.id !== blog.id)
+        setBlogs(updatedBlogs)
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+
+  }
     return (
       <div>
         <h1>Blogs</h1>
@@ -136,7 +166,7 @@ const App = () => {
             <br/>
             <div>
               {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} /> )}
+              <Blog key={blog.id} blog={blog} addLike={addLike} deleteBlog={deleteBlog}/>)}
             </div>
           </div>
         )}

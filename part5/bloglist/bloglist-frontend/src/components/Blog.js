@@ -1,11 +1,16 @@
 import React, {useState} from 'react'
-const Blog = ({blog}) => {
+const Blog = ({blog, addLike, deleteBlog}) => {
   const [detailMode, setDetailMode] = useState(false)
+  let user;
+  const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      user = JSON.parse(loggedUserJSON)
+    }
 
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    paddingBottom: 5,
+    paddingBottom: 10,
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
@@ -30,8 +35,9 @@ const Blog = ({blog}) => {
     {detailMode && <button onClick={() => hideDetail()}  style={btn}>Hide</button>}
     {detailMode && <div>
       <div><a href={blog.url}>{blog.url}</a></div>
-      <div>likes {blog.likes} <button style={btn}>Like</button></div>
+      <div>likes {blog.likes} <button onClick={() => addLike(blog)} style={btn}>Like</button></div>
       <div>{blog.user.name}</div>
+      {user.id === blog.user.id && <button onClick={() => deleteBlog(blog)} style={btn}>Remove Blog</button>}
     </div>}
     </div>
   </div>  
