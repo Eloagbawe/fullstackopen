@@ -1,11 +1,11 @@
-import React, {useState} from 'react'
-const Blog = ({blog, addLike, deleteBlog}) => {
+import React, { useState } from 'react'
+const Blog = ({ blog, addLike, deleteBlog }) => {
   const [detailMode, setDetailMode] = useState(false)
-  let user;
+  let user
   const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-    if (loggedUserJSON) {
-      user = JSON.parse(loggedUserJSON)
-    }
+  if (loggedUserJSON) {
+    user = JSON.parse(loggedUserJSON)
+  }
 
   const blogStyle = {
     paddingTop: 10,
@@ -28,19 +28,19 @@ const Blog = ({blog, addLike, deleteBlog}) => {
     setDetailMode(false)
   }
   return (
-  <div style={blogStyle}>
-    <div>
-    {blog.title} {blog.author}
-    {!detailMode && <button onClick={() => showDetail()} style={btn}>View</button>}
-    {detailMode && <button onClick={() => hideDetail()}  style={btn}>Hide</button>}
-    {detailMode && <div>
-      <div><a href={blog.url}>{blog.url}</a></div>
-      <div>likes {blog.likes} <button onClick={() => addLike(blog)} style={btn}>Like</button></div>
-      <div>{blog.user.name}</div>
-      {user.id === blog.user.id && <button onClick={() => deleteBlog(blog)} style={btn}>Remove Blog</button>}
-    </div>}
+    <div style={blogStyle}>
+      <div>
+        {blog.title} {blog.author}
+        {!detailMode && <button onClick={() => showDetail()} style={btn}>View</button>}
+        {detailMode && <button onClick={() => hideDetail()}  style={btn}>Hide</button>}
+        {detailMode && <div>
+          <div><a href={blog.url}>{blog.url}</a></div>
+          <div>likes {blog.likes} <button onClick={() => addLike(blog)} style={btn}>Like</button></div>
+          <div>{blog.user.name}</div>
+          {user.id === blog.user.id && <button onClick={() => deleteBlog(blog)} style={btn}>Remove Blog</button>}
+        </div>}
+      </div>
     </div>
-  </div>  
-)}
+  )}
 
 export default Blog
