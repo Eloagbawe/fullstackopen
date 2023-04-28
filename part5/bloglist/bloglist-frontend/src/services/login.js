@@ -7,6 +7,6 @@ const login = async credentials => {
 }
 
 const loginService = {
-    login
+  login
 }
 export default loginService
