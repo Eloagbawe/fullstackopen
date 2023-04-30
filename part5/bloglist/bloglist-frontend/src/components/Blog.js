@@ -29,7 +29,7 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
   }
   return (
     <div style={blogStyle}>
-      <div>
+      <div className='blog'>
         {blog.title} {blog.author}
         {!detailMode && <button onClick={() => showDetail()} style={btn}>View</button>}
         {detailMode && <button onClick={() => hideDetail()}  style={btn}>Hide</button>}
