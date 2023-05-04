@@ -24,7 +24,7 @@ test('renders content', async() => {
     'Component testing is done with react-testing-library'
   )
 
-  screen.debug()
+  // screen.debug()
 
   const element = screen.getByText('Component testing is done with react-testing-library react-testing-library')
   const element2 = screen.getByText('View')
