@@ -34,8 +34,8 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
         {!detailMode && <button onClick={() => showDetail()} style={btn}>View</button>}
         {detailMode && <button onClick={() => hideDetail()}  style={btn}>Hide</button>}
         {detailMode && <div>
-          <div><a href={blog.url}>{blog.url}</a></div>
-          <div>likes {blog.likes} <button onClick={() => addLike(blog)} style={btn}>Like</button></div>
+          <div className="url"><a href={blog.url}>{blog.url}</a></div>
+          <div className="likes">likes {blog.likes} <button onClick={() => addLike(blog)} style={btn}>Like</button></div>
           <div>{blog.user.name}</div>
           {user.id === blog.user.id && <button onClick={() => deleteBlog(blog)} style={btn}>Remove Blog</button>}
         </div>}
