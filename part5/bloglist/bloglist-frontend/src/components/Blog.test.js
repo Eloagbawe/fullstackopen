@@ -29,12 +29,20 @@ test('renders content', async() => {
 
   const element = screen.getByText('Component testing is done with react-testing-library react-testing-library')
   const element2 = screen.getByText('View')
+  const element3 = screen.queryByText('https://google.com')
+  const element4 = screen.queryByText('likes 0')
 
   expect(element).toBeDefined()
   expect(element2).toBeDefined()
+  expect(element3).not.toBeInTheDocument()
+  expect(element4).not.toBeInTheDocument()
+  // expect(element4).toBeInTheDocument()
+
+
 
   const button = screen.getByText('View')
   await userEvent.click(button)
+
 
   const url = container.querySelector('.url')
   const likes = container.querySelector('.likes')
