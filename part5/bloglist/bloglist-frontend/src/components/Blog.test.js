@@ -18,7 +18,9 @@ test('renders content', async() => {
     }
   }
 
-  const { container } =  render(<Blog blog={blog} />)
+  const addLike = jest.fn()
+
+  const { container } =  render(<Blog blog={blog} addLike={addLike}/>)
   const div = container.querySelector('.blog')
 
   expect(div).toHaveTextContent(
@@ -38,14 +40,22 @@ test('renders content', async() => {
   expect(element4).not.toBeInTheDocument()
   // expect(element4).toBeInTheDocument()
 
-
-
   const button = screen.getByText('View')
   await userEvent.click(button)
-
 
   const url = container.querySelector('.url')
   const likes = container.querySelector('.likes')
   expect(url).not.toHaveStyle('display: none')
   expect(likes).not.toHaveStyle('display: none')
+
+  const element5 = screen.getByText('likes 0')
+  expect(element5).toBeInTheDocument()
+
+  const likeButton = screen.getByText('Like')
+  await userEvent.click(likeButton)
+
+  expect(addLike.mock.calls).toHaveLength(1)
+  // const element6 = screen.getByText('likes 1')
+  // expect(element6).toBeInTheDocument()
+
 })
