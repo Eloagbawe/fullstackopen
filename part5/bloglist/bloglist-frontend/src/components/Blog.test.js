@@ -2,60 +2,74 @@ import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-
-
 import Blog from './Blog'
 
-test('renders content', async() => {
-  const blog = {
-    title: 'Component testing is done with react-testing-library',
-    author: 'react-testing-library',
-    url: 'https://google.com',
-    likes: 0,
-    user: {
-      id: '12',
-      name: 'react-testing',
+describe('<Blog />', () => {
+  let container
+  let addLike
+
+  beforeEach(() => {
+    const blog = {
+      title: 'Component testing is done with react-testing-library',
+      author: 'react-testing-library',
+      url: 'https://google.com',
+      likes: 0,
+      user: {
+        id: '12',
+        name: 'react-testing',
+      }
     }
-  }
 
-  const addLike = jest.fn()
+    addLike = jest.fn()
+    container = render(<Blog blog={blog} addLike={addLike}/>).container
 
-  const { container } =  render(<Blog blog={blog} addLike={addLike}/>)
-  const div = container.querySelector('.blog')
+  })
 
-  expect(div).toHaveTextContent(
-    'Component testing is done with react-testing-library'
-  )
+  test('renders appropriate content', async() => {
+    const div = container.querySelector('.blog')
 
-  // screen.debug()
+    expect(div).toHaveTextContent(
+      'Component testing is done with react-testing-library'
+    )
 
-  const element = screen.getByText('Component testing is done with react-testing-library react-testing-library')
-  const element2 = screen.getByText('View')
-  const element3 = screen.queryByText('https://google.com')
-  const element4 = screen.queryByText('likes 0')
+    const element = screen.getByText('Component testing is done with react-testing-library react-testing-library')
+    const element2 = screen.getByText('View')
+    const element3 = screen.queryByText('https://google.com')
+    const element4 = screen.queryByText('likes 0')
 
-  expect(element).toBeDefined()
-  expect(element2).toBeDefined()
-  expect(element3).not.toBeInTheDocument()
-  expect(element4).not.toBeInTheDocument()
-  // expect(element4).toBeInTheDocument()
+    expect(element).toBeDefined()
+    expect(element2).toBeDefined()
+    expect(element3).not.toBeInTheDocument()
+    expect(element4).not.toBeInTheDocument()
 
-  const button = screen.getByText('View')
-  await userEvent.click(button)
+  })
 
-  const url = container.querySelector('.url')
-  const likes = container.querySelector('.likes')
-  expect(url).not.toHaveStyle('display: none')
-  expect(likes).not.toHaveStyle('display: none')
+  test('Displays url and likes when the view button is clicked', async() => {
+    const button = screen.getByText('View')
+    await userEvent.click(button)
 
-  const element5 = screen.getByText('likes 0')
-  expect(element5).toBeInTheDocument()
+    const url = container.querySelector('.url')
+    const likes = container.querySelector('.likes')
+    expect(url).not.toHaveStyle('display: none')
+    expect(likes).not.toHaveStyle('display: none')
 
-  const likeButton = screen.getByText('Like')
-  await userEvent.click(likeButton)
+    expect(screen.queryByText('https://google.com')).toBeInTheDocument()
+    expect(screen.queryByText('likes 0')).toBeInTheDocument()
 
-  expect(addLike.mock.calls).toHaveLength(1)
-  // const element6 = screen.getByText('likes 1')
-  // expect(element6).toBeInTheDocument()
+  })
 
+  test(`ensures that the event handler the component received as props is called twice
+  when the like button is clicked twice`, async() => {
+    const button = screen.getByText('View')
+    await userEvent.click(button)
+
+    const likeButton = screen.getByText('Like')
+    await userEvent.click(likeButton)
+
+    expect(addLike.mock.calls).toHaveLength(1)
+
+    await userEvent.click(likeButton)
+    expect(addLike.mock.calls).toHaveLength(2)
+
+  })
 })
