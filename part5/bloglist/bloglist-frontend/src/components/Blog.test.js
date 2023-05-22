@@ -7,6 +7,7 @@ import Blog from './Blog'
 describe('<Blog />', () => {
   let container
   let addLike
+  let deleteBlog
   beforeEach(() => {
     jest.spyOn(window.localStorage.__proto__, 'getItem').mockReturnValue(JSON.stringify({ id: '12' }))
     const blog = {
@@ -21,7 +22,8 @@ describe('<Blog />', () => {
     }
 
     addLike = jest.fn()
-    container = render(<Blog blog={blog} addLike={addLike}/>).container
+    deleteBlog = jest.fn()
+    container = render(<Blog blog={blog} addLike={addLike} deleteBlog={deleteBlog}/>).container
 
   })
 
@@ -36,11 +38,13 @@ describe('<Blog />', () => {
     const element2 = screen.getByText('View')
     const element3 = screen.queryByText('https://google.com')
     const element4 = screen.queryByText('likes 0')
+    const element5 = screen.queryByText('Remove Blog')
 
     expect(element).toBeDefined()
     expect(element2).toBeDefined()
     expect(element3).not.toBeInTheDocument()
     expect(element4).not.toBeInTheDocument()
+    expect(element5).not.toBeInTheDocument()
 
   })
 
@@ -50,8 +54,12 @@ describe('<Blog />', () => {
 
     const url = container.querySelector('.url')
     const likes = container.querySelector('.likes')
+    const deleteBtn = container.querySelector('.deleteBtn')
+
     expect(url).not.toHaveStyle('display: none')
     expect(likes).not.toHaveStyle('display: none')
+    expect(deleteBtn).not.toHaveStyle('display: none')
+
 
     expect(screen.queryByText('https://google.com')).toBeInTheDocument()
     expect(screen.queryByText('likes 0')).toBeInTheDocument()
