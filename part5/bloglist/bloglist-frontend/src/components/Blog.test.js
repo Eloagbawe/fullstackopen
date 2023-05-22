@@ -7,8 +7,8 @@ import Blog from './Blog'
 describe('<Blog />', () => {
   let container
   let addLike
-
   beforeEach(() => {
+    jest.spyOn(window.localStorage.__proto__, 'getItem').mockReturnValue(JSON.stringify({ id: '12' }))
     const blog = {
       title: 'Component testing is done with react-testing-library',
       author: 'react-testing-library',
