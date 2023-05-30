@@ -42,5 +42,35 @@ describe('Blog list app', function() {
       cy.get('#create').click()
       cy.contains('a new blog cypress')
     })
+
+    describe('and when a blog exists', function() {
+      beforeEach(function() {
+        cy.contains('create new blog').click()
+        cy.get('#title').type('a new blog')
+        cy.get('#author').type('cypress')
+        cy.get('#url').type('localhost')
+        cy.get('#create').click()
+      })
+
+      it('blog details can be viewed and hidden', function() {
+        cy.contains('a new blog cypress').get('.url').should('not.exist')
+        cy.contains('a new blog cypress').get('.likes').should('not.exist')
+        cy.contains('a new blog cypress').contains('View').click()
+        cy.contains('a new blog cypress').get('.url').should('exist')
+        cy.contains('a new blog cypress').get('.likes').should('exist')
+        cy.contains('a new blog cypress').contains('localhost')
+        cy.contains('a new blog cypress').contains('likes 0')
+        cy.contains('a new blog cypress').contains('Hide').click()
+        cy.contains('a new blog cypress').get('.url').should('not.exist')
+        cy.contains('a new blog cypress').get('.likes').should('not.exist')
+      })
+
+      it('blog can be liked', function() {
+        cy.contains('a new blog cypress').contains('View').click()
+        cy.contains('a new blog cypress').contains('likes 0')
+        cy.contains('a new blog cypress').contains('Like').click()
+        cy.contains('a new blog cypress').contains('likes 1')
+      })
+    })
   })
 })
