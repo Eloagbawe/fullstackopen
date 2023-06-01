@@ -71,6 +71,12 @@ describe('Blog list app', function() {
         cy.contains('a new blog cypress').contains('Like').click()
         cy.contains('a new blog cypress').contains('likes 1')
       })
+
+      it('blog can be removed', function() {
+        cy.contains('a new blog cypress').contains('View').click()
+        cy.contains('a new blog cypress').contains('Remove Blog').click()
+        cy.contains('a new blog cypress').should('not.exist')
+      })
     })
   })
 })
