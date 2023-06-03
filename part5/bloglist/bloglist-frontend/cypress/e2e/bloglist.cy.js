@@ -15,30 +15,34 @@ describe('Blog list app', function() {
     cy.contains('log in')
   })
 
-  it('login form can be opened', function() {
+  it('login form is shown', function() {
     cy.contains('log in').click()
   })
 
-  it('login fails with wrong password', function() {
-    cy.contains('log in').click()
-    cy.get('#username').type('root')
-    cy.get('#password').type('wrong')
-    cy.get('#login-button').click()
-    // cy.get('.fail').contains('wrong username or password')
-    cy.get('.fail')
-      .should('contain', 'wrong username or password')
-      .and('have.css', 'color', 'rgb(255, 0, 0)')
-      .and('have.css', 'border-style', 'solid')
-    cy.get('html').should('not.contain', 'Root User is logged in')
-  })
+  describe('Login', function() {
+    beforeEach(function() {
+      cy.contains('log in').click()
+    })
 
-  it('user can login', function () {
-    cy.contains('log in').click()
-    cy.get('#username').type('root')
-    cy.get('#password').type('sekret')
-    cy.get('#login-button').click()
+    it('succeeds with correct credentials', function () {
+      cy.get('#username').type('root')
+      cy.get('#password').type('sekret')
+      cy.get('#login-button').click()
+      cy.contains('Root User is logged in')
+    })
 
-    cy.contains('Root User is logged in')
+    it('fails with wrong credentials', function() {
+      cy.get('#username').type('root')
+      cy.get('#password').type('wrong')
+      cy.get('#login-button').click()
+      // cy.get('.fail').contains('wrong username or password')
+      cy.get('.fail')
+        .should('contain', 'wrong username or password')
+        .and('have.css', 'color', 'rgb(255, 0, 0)')
+        .and('have.css', 'border-style', 'solid')
+      cy.get('html').should('not.contain', 'Root User is logged in')
+    })
+
   })
 
   describe('when logged in', function() {
@@ -50,7 +54,7 @@ describe('Blog list app', function() {
       cy.login({ username: 'root', password: 'sekret' })
     })
 
-    it('a new blog can be created', function() {
+    it('A blog can be created', function() {
       cy.contains('create new blog').click()
       cy.get('#title').type('a new blog')
       cy.get('#author').type('cypress')
