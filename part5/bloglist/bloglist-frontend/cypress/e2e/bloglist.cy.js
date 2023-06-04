@@ -97,11 +97,30 @@ describe('Blog list app', function() {
         cy.contains('a new blog cypress').contains('likes 1')
       })
 
-      it('blog can be removed', function() {
+      it('the user who created a blog can delete it', function() {
         cy.contains('a new blog cypress').contains('View').click()
         cy.contains('a new blog cypress').contains('Remove Blog').click()
         cy.contains('a new blog cypress').should('not.exist')
       })
+
+      it('only the creator can see the remove blog button', function() {
+        const anotherUser = {
+          name: 'Guest User',
+          username: 'guest',
+          password: 'sekret'
+        }
+        cy.request('POST', `${Cypress.env('BACKEND')}/users/`, anotherUser)
+        cy.contains('a new blog cypress').should('exist')
+        cy.contains('logout').click()
+        cy.contains('log in').click()
+        cy.get('#username').type('guest')
+        cy.get('#password').type('sekret')
+        cy.get('#login-button').click()
+        cy.contains('Guest User is logged in')
+        cy.contains('a new blog cypress').contains('View').click()
+        cy.contains('a new blog cypress').contains('Remove Blog').should('not.exist')
+      })
     })
   })
+
 })
