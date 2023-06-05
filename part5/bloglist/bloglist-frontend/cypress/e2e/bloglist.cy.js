@@ -120,7 +120,38 @@ describe('Blog list app', function() {
         cy.contains('a new blog cypress').contains('View').click()
         cy.contains('a new blog cypress').contains('Remove Blog').should('not.exist')
       })
+
+      it('blogs are ordered according to like', function() {
+        cy.createBlog({
+          title: 'a second blog',
+          author: 'cypress',
+          url: 'localhost'
+        })
+
+        cy.createBlog({
+          title: 'a third blog',
+          author: 'cypress',
+          url: 'localhost'
+        })
+
+        cy.contains('a second blog cypress').contains('View').click()
+        cy.contains('a second blog cypress').contains('Like').click()
+        cy.contains('a third blog cypress').contains('View').click()
+        cy.contains('a third blog cypress').contains('Like').click()
+        cy.contains('a third blog cypress').contains('Like').click()
+        cy.contains('a third blog cypress').contains('Like').click()
+        cy.contains('a second blog cypress').contains('Like').click()
+        cy.contains('a second blog cypress').contains('Like').click()
+        cy.contains('a third blog cypress').contains('Like').click()
+
+        cy.contains('a second blog cypress').contains('Hide').click()
+        cy.contains('a third blog cypress').contains('Hide').click()
+
+        cy.get('.blog').eq(0).should('contain', 'a third blog cypress')
+        cy.get('.blog').eq(1).should('contain', 'a second blog cypress')
+      })
     })
+
   })
 
 })
