@@ -134,7 +134,9 @@ const App = () => {
         }
         return item
       })
-      setBlogs(updatedBlogs)
+      const sortedBlogs = updatedBlogs.sort(function(a, b) {return b.likes - a.likes})
+      setBlogs( sortedBlogs )
+      // setBlogs(updatedBlogs)
     }).catch((err) => {
       console.log(err)
     })
