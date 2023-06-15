@@ -6,7 +6,7 @@ const AnecdoteForm = () => {
   const dispatch = useDispatch()
   const add = (e) => {
     e.preventDefault()
-    dispatch(addAnecdote(e.target.anecdote.value))
+    dispatch(addAnecdote({content: e.target.anecdote.value}))
     e.target.anecdote.value = ''
   }
   return (
