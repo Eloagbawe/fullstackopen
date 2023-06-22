@@ -30,11 +30,17 @@ const App = () => {
   //   },
   // ]
 
-  const result = useQuery('anecdotes', getAnecdotes)
+  const result = useQuery('anecdotes', getAnecdotes, {
+    retry: 1
+  })
   console.log(result)
 
   if ( result.isLoading ) {
     return <div>loading data...</div>
+  }
+
+  if (result.isError && result.error.code === 'ERR_NETWORK') {
+    return <div>anecdote service not available due to problems in server</div>
   }
 
   const anecdotes = result.data;
