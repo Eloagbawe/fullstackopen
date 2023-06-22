@@ -4,6 +4,11 @@ const initialState = {
   bad: 0
 }
 
+export const addGood = () => {
+  return {
+    type: 'GOOD'
+  }
+}
 const counterReducer = (state = initialState, action) => {
   console.log(action)
   switch (action.type) {
