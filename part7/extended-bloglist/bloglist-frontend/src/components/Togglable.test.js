@@ -10,9 +10,7 @@ describe('<Togglable />', () => {
   beforeEach(() => {
     container = render(
       <Togglable buttonLabel="show...">
-        <div className="testDiv" >
-          togglable content
-        </div>
+        <div className="testDiv">togglable content</div>
       </Togglable>
     ).container
   })
@@ -27,7 +25,6 @@ describe('<Togglable />', () => {
   })
 
   test('after clicking the button, children are displayed', async () => {
-    // const user = userEvent.setup()
     const button = screen.getByText('show...')
     await userEvent.click(button)
 

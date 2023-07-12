@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event'
 
 test('<BlogForm /> updates parent state and calls onSubmit', async () => {
   const createBlog = jest.fn()
-  // const user = userEvent.setup()
 
   render(<BlogForm createBlog={createBlog} />)
 

@@ -9,7 +9,9 @@ describe('<Blog />', () => {
   let addLike
   let deleteBlog
   beforeEach(() => {
-    jest.spyOn(window.localStorage.__proto__, 'getItem').mockReturnValue(JSON.stringify({ id: '12' }))
+    jest
+      .spyOn(window.localStorage.__proto__, 'getItem')
+      .mockReturnValue(JSON.stringify({ id: '12' }))
     const blog = {
       title: 'Component testing is done with react-testing-library',
       author: 'react-testing-library',
@@ -18,23 +20,26 @@ describe('<Blog />', () => {
       user: {
         id: '12',
         name: 'react-testing',
-      }
+      },
     }
 
     addLike = jest.fn()
     deleteBlog = jest.fn()
-    container = render(<Blog blog={blog} addLike={addLike} deleteBlog={deleteBlog}/>).container
-
+    container = render(
+      <Blog blog={blog} addLike={addLike} deleteBlog={deleteBlog} />
+    ).container
   })
 
-  test('renders appropriate content', async() => {
+  test('renders appropriate content', async () => {
     const div = container.querySelector('.blog')
 
     expect(div).toHaveTextContent(
       'Component testing is done with react-testing-library'
     )
 
-    const element = screen.getByText('Component testing is done with react-testing-library react-testing-library')
+    const element = screen.getByText(
+      'Component testing is done with react-testing-library react-testing-library'
+    )
     const element2 = screen.getByText('View')
     const element3 = screen.queryByText('https://google.com')
     const element4 = screen.queryByText('likes 0')
@@ -45,10 +50,9 @@ describe('<Blog />', () => {
     expect(element3).not.toBeInTheDocument()
     expect(element4).not.toBeInTheDocument()
     expect(element5).not.toBeInTheDocument()
-
   })
 
-  test('Displays url and likes when the view button is clicked', async() => {
+  test('Displays url and likes when the view button is clicked', async () => {
     const button = screen.getByText('View')
     await userEvent.click(button)
 
@@ -60,14 +64,12 @@ describe('<Blog />', () => {
     expect(likes).not.toHaveStyle('display: none')
     expect(deleteBtn).not.toHaveStyle('display: none')
 
-
     expect(screen.queryByText('https://google.com')).toBeInTheDocument()
     expect(screen.queryByText('likes 0')).toBeInTheDocument()
-
   })
 
   test(`ensures that the event handler the component received as props is called twice
-  when the like button is clicked twice`, async() => {
+  when the like button is clicked twice`, async () => {
     const button = screen.getByText('View')
     await userEvent.click(button)
 
@@ -78,6 +80,5 @@ describe('<Blog />', () => {
 
     await userEvent.click(likeButton)
     expect(addLike.mock.calls).toHaveLength(2)
-
   })
 })

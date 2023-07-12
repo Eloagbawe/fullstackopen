@@ -13,11 +13,11 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
     paddingBottom: 10,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
   const btn = {
-    marginLeft: 10
+    marginLeft: 10,
   }
 
   const showDetail = () => {
@@ -29,18 +29,44 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
   }
   return (
     <div style={blogStyle}>
-      <div className='blog'>
+      <div className="blog">
         {blog.title} {blog.author}
-        {!detailMode && <button onClick={() => showDetail()} style={btn}>View</button>}
-        {detailMode && <button onClick={() => hideDetail()}  style={btn}>Hide</button>}
-        {detailMode && <div>
-          <div className="url"><a href={blog.url}>{blog.url}</a></div>
-          <div className="likes">likes {blog.likes} <button onClick={() => addLike(blog)} style={btn}>Like</button></div>
-          <div>{blog.user.name}</div>
-          {user.id === blog.user.id && <button className="deleteBtn" onClick={() => deleteBlog(blog)} style={btn}>Remove Blog</button>}
-        </div>}
+        {!detailMode && (
+          <button onClick={() => showDetail()} style={btn}>
+            View
+          </button>
+        )}
+        {detailMode && (
+          <button onClick={() => hideDetail()} style={btn}>
+            Hide
+          </button>
+        )}
+        {detailMode && (
+          <div>
+            <div className="url">
+              <a href={blog.url}>{blog.url}</a>
+            </div>
+            <div className="likes">
+              likes {blog.likes}{' '}
+              <button onClick={() => addLike(blog)} style={btn}>
+                Like
+              </button>
+            </div>
+            <div>{blog.user.name}</div>
+            {user.id === blog.user.id && (
+              <button
+                className="deleteBtn"
+                onClick={() => deleteBlog(blog)}
+                style={btn}
+              >
+                Remove Blog
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
-  )}
+  )
+}
 
 export default Blog

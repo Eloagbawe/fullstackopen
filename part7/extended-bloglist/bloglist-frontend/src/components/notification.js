@@ -5,11 +5,7 @@ const Notification = ({ message, propertyName }) => {
     return null
   }
 
-  return (
-    <div className={propertyName}>
-      {message}
-    </div>
-  )
+  return <div className={propertyName}>{message}</div>
 }
 
 export default Notification
