@@ -1,5 +1,16 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './App'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { NotificationContextProvider } from './store/notificationContext'
 
-ReactDOM.render(<App />, document.getElementById('root'))
+import App from './App'
+const queryClient = new QueryClient()
+
+ReactDOM.render(
+  <QueryClientProvider client={queryClient}>
+    <NotificationContextProvider>
+      <App />
+    </NotificationContextProvider>
+  </QueryClientProvider>,
+  document.getElementById('root')
+)
