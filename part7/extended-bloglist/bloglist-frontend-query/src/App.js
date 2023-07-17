@@ -7,16 +7,21 @@ import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import { useContext } from 'react'
+
+import notificationContext from './store/notificationContext'
+
 
 const App = () => {
+  const [notification, notificationDispatch] = useContext(notificationContext)
+
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [message, setMessage] = useState(null)
-  const [propertyName, setPropertyName] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
+  const { message, propertyName } = notification
   useEffect(() => {
     blogService.getAll().then((blogs) => {
       const sortedBlogs = blogs.sort(function (a, b) {
@@ -50,10 +55,17 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      setMessage('wrong username or password')
-      setPropertyName('fail')
+      notificationDispatch({
+        type: 'DISPLAY MESSAGE',
+        payload: {
+          message: 'wrong username or password',
+          propertyName: 'fail'
+        }
+      })
       setTimeout(() => {
-        setMessage(null)
+        notificationDispatch({
+          type: 'CLEAR MESSAGE'
+        })
       }, 5000)
     }
   }
@@ -76,12 +88,17 @@ const App = () => {
         }
         const newBlog = { ...returnedBlog, user: loggedInUser }
         setBlogs(blogs.concat(newBlog))
-        setMessage(
-          `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`
-        )
-        setPropertyName('success')
+        notificationDispatch({
+          type: 'DISPLAY MESSAGE',
+          payload: {
+            message:  `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
+            propertyName: 'success'
+          }
+        })
         setTimeout(() => {
-          setMessage(null)
+          notificationDispatch({
+            type: 'CLEAR MESSAGE'
+          })
         }, 5000)
       })
       .catch((error) => {
