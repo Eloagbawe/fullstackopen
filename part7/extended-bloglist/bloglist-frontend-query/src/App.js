@@ -8,28 +8,20 @@ import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import { useContext } from 'react'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 
 import notificationContext from './store/notificationContext'
 
-
 const App = () => {
-  const [notification, notificationDispatch] = useContext(notificationContext)
+  const queryClient = useQueryClient()
 
-  const [blogs, setBlogs] = useState([])
+  const [notification, notificationDispatch] = useContext(notificationContext)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
   const { message, propertyName } = notification
-  useEffect(() => {
-    blogService.getAll().then((blogs) => {
-      const sortedBlogs = blogs.sort(function (a, b) {
-        return b.likes - a.likes
-      })
-      setBlogs(sortedBlogs)
-    })
-  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -39,6 +31,47 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const result = useQuery('blogs', blogService.getAll, {
+    retry: 1,
+    refetchOnWindowFocus: false,
+  })
+
+  const blogs = result.data
+    ? result.data.sort(function (a, b) {
+      return b.likes - a.likes
+    })
+    : []
+
+  const addBlogMutation = useMutation(blogService.create, {
+    onSuccess: (data) => {
+      queryClient.invalidateQueries('blogs')
+      notificationDispatch({
+        type: 'DISPLAY MESSAGE',
+        payload: {
+          message: `a new blog ${data.title} by ${data.author} added`,
+          propertyName: 'success',
+        },
+      })
+      setTimeout(() => {
+        notificationDispatch({
+          type: 'CLEAR MESSAGE',
+        })
+      }, 5000)
+    },
+  })
+
+  const addLikeMutation = useMutation(blogService.update, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    },
+  })
+
+  const deleteBlogMutation = useMutation(blogService.deleteBlog, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    },
+  })
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -59,12 +92,12 @@ const App = () => {
         type: 'DISPLAY MESSAGE',
         payload: {
           message: 'wrong username or password',
-          propertyName: 'fail'
-        }
+          propertyName: 'fail',
+        },
       })
       setTimeout(() => {
         notificationDispatch({
-          type: 'CLEAR MESSAGE'
+          type: 'CLEAR MESSAGE',
         })
       }, 5000)
     }
@@ -78,32 +111,7 @@ const App = () => {
 
   const createBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
-    blogService
-      .create(blogObject)
-      .then((returnedBlog) => {
-        const loggedInUser = {
-          id: user.id,
-          name: user.name,
-          username: user.username,
-        }
-        const newBlog = { ...returnedBlog, user: loggedInUser }
-        setBlogs(blogs.concat(newBlog))
-        notificationDispatch({
-          type: 'DISPLAY MESSAGE',
-          payload: {
-            message:  `a new blog ${returnedBlog.title} by ${returnedBlog.author} added`,
-            propertyName: 'success'
-          }
-        })
-        setTimeout(() => {
-          notificationDispatch({
-            type: 'CLEAR MESSAGE'
-          })
-        }, 5000)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+    addBlogMutation.mutate(blogObject)
   }
 
   const blogForm = () => (
@@ -126,37 +134,21 @@ const App = () => {
 
   const addLike = (blog) => {
     const updatedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
-    blogService
-      .update(blog.id, updatedBlog)
-      .then(() => {
-        const updatedBlogs = blogs.map((item) => {
-          if (item.id === blog.id) {
-            item.likes += 1
-          }
-          return item
-        })
-        const sortedBlogs = updatedBlogs.sort(function (a, b) {
-          return b.likes - a.likes
-        })
-        setBlogs(sortedBlogs)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+    addLikeMutation.mutate({ id: blog.id, newObject: updatedBlog })
   }
 
   const deleteBlog = (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      blogService
-        .deleteBlog(blog.id)
-        .then(() => {
-          const updatedBlogs = blogs.filter((item) => item.id !== blog.id)
-          setBlogs(updatedBlogs)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      deleteBlogMutation.mutate(blog.id)
     }
+  }
+
+  if (result.isLoading) {
+    return <div>loading data...</div>
+  }
+
+  if (result.isError && result.error.response.status === 500) {
+    return <div>blog service not available due to problems in server</div>
   }
   return (
     <div>
@@ -174,14 +166,15 @@ const App = () => {
           {blogForm()}
           <br />
           <div>
-            {blogs.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                addLike={addLike}
-                deleteBlog={deleteBlog}
-              />
-            ))}
+            {blogs &&
+              blogs.map((blog) => (
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  addLike={addLike}
+                  deleteBlog={deleteBlog}
+                />
+              ))}
           </div>
         </div>
       )}
