@@ -11,14 +11,15 @@ import { useContext } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 
 import notificationContext from './store/notificationContext'
+import authContext from './store/authContext'
 
 const App = () => {
   const queryClient = useQueryClient()
 
   const [notification, notificationDispatch] = useContext(notificationContext)
+  const [user, userDispatch] = useContext(authContext)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const blogFormRef = useRef()
 
   const { message, propertyName } = notification
@@ -27,11 +28,13 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      userDispatch({
+        type: 'SET USER',
+        payload: user
+      })
+      blogService.setToken(user)
     }
   }, [])
-
   const result = useQuery('blogs', blogService.getAll, {
     retry: 1,
     refetchOnWindowFocus: false,
@@ -83,8 +86,11 @@ const App = () => {
         password,
       })
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
+      userDispatch({
+        type: 'SET USER',
+        payload: user
+      })
+      blogService.setToken(user)
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -106,7 +112,9 @@ const App = () => {
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
+    userDispatch({
+      type: 'REMOVE USER'
+    })
   }
 
   const createBlog = (blogObject) => {
