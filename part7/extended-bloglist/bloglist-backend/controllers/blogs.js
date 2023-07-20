@@ -1,15 +1,19 @@
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const jwt = require("jsonwebtoken");
+const Comment = require("../models/comment");
 const userExtractor = require("../utils/middleware").userExtractor;
 
 blogsRouter.get("/", async (req, res, next) => {
   try {
-    const blogs = await Blog.find({}).populate("user", {
-      username: 1,
-      name: 1,
-    });
+    const blogs = await Blog.find({})
+      .populate("user", {
+        username: 1,
+        name: 1,
+      })
+      .populate("comments", {
+        text: 1,
+      });
     res.json(blogs);
   } catch (err) {
     next(err);
@@ -25,12 +29,6 @@ blogsRouter.post("/", userExtractor, async (req, res, next) => {
         error: "title or url missing",
       });
     } else {
-      // const decodedToken = jwt.verify(req.token, process.env.SECRET)
-      // if (!req.token || !decodedToken.id) {
-      //   return res.status(401).json({ error: 'token missing or invalid' })
-      // }
-      // const user = await User.findById(decodedToken.id)
-
       const user = await User.findById(req.user.id);
       const blog = new Blog({
         title: body.title,
@@ -76,8 +74,6 @@ blogsRouter.delete("/:id", userExtractor, async (req, res, next) => {
     const blogToBeDeleted = await Blog.findById(req.params.id);
     const user = await User.findById(req.user.id);
 
-    // console.log(blogToBeDeleted.user.toString() === user.id.toString())
-
     if (blogToBeDeleted.user.toString() === user.id.toString()) {
       const blogIdIndex = user.blogs.indexOf(blogToBeDeleted.id);
       user.blogs.splice(blogIdIndex, 1);
@@ -85,16 +81,32 @@ blogsRouter.delete("/:id", userExtractor, async (req, res, next) => {
       await Blog.findByIdAndRemove(req.params.id);
       res.status(204).end();
     }
-
-    // if ( blogToBeDeleted.user.toString() === user.id.toString()){
-    //   // await Blog.deleteOne(blogToBeDeleted)
-    //   await Blog.findByIdAndRemove(req.params.id)
-
-    //   res.status(204).end()
-    // }
   } catch (err) {
     next(err);
   }
 });
 
+blogsRouter.post("/:id/comments", userExtractor, async (req, res, next) => {
+  try {
+    const body = req.body;
+    const blogToBeUpdated = await Blog.findById(req.params.id);
+
+    if (!body.text) {
+      res.status(400).json({
+        error: "comment text missing",
+      });
+    } else {
+      const comment = new Comment({
+        text: body.text,
+        blog: blogToBeUpdated._id,
+      });
+      const result = await comment.save();
+      blogToBeUpdated.comments = blogToBeUpdated.comments.concat(result._id);
+      await blogToBeUpdated.save();
+      res.status(201).json(result);
+    }
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = blogsRouter;
