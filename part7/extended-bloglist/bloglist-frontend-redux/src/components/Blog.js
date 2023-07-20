@@ -1,11 +1,6 @@
-import React, { useState } from 'react'
-const Blog = ({ blog, addLike, deleteBlog }) => {
-  const [detailMode, setDetailMode] = useState(false)
-  let user
-  const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
-  if (loggedUserJSON) {
-    user = JSON.parse(loggedUserJSON)
-  }
+import React from 'react'
+import { Link } from 'react-router-dom'
+const Blog = ({ blog }) => {
 
   const blogStyle = {
     paddingTop: 10,
@@ -16,54 +11,10 @@ const Blog = ({ blog, addLike, deleteBlog }) => {
     marginBottom: 5,
   }
 
-  const btn = {
-    marginLeft: 10,
-  }
-
-  const showDetail = () => {
-    setDetailMode(true)
-  }
-
-  const hideDetail = () => {
-    setDetailMode(false)
-  }
   return (
     <div style={blogStyle}>
       <div className="blog">
-        {blog.title} {blog.author}
-        {!detailMode && (
-          <button onClick={() => showDetail()} style={btn}>
-            View
-          </button>
-        )}
-        {detailMode && (
-          <button onClick={() => hideDetail()} style={btn}>
-            Hide
-          </button>
-        )}
-        {detailMode && (
-          <div>
-            <div className="url">
-              <a href={blog.url}>{blog.url}</a>
-            </div>
-            <div className="likes">
-              likes {blog.likes}{' '}
-              <button onClick={() => addLike(blog)} style={btn}>
-                Like
-              </button>
-            </div>
-            <div>{blog.user.name}</div>
-            {user.id === blog.user.id && (
-              <button
-                className="deleteBtn"
-                onClick={() => deleteBlog(blog)}
-                style={btn}
-              >
-                Remove Blog
-              </button>
-            )}
-          </div>
-        )}
+        <Link to={`/blogs/${blog.id}`}>{blog.title} {blog.author}</Link>
       </div>
     </div>
   )
