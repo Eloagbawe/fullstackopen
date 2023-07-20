@@ -1,17 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit'
 import blogService from '../services/blogs'
 
-
 const blogSlice = createSlice({
   name: 'blog',
   initialState: {
-    blogs: []
+    blogs: [],
   },
   reducers: {
     getBlogs(state, action) {
       return {
         ...state,
-        blogs: action.payload
+        blogs: action.payload,
       }
     },
     createBlog(state, action) {
@@ -19,31 +18,40 @@ const blogSlice = createSlice({
       const user = action.payload.user
       return {
         ...state,
-        blogs: state.blogs.concat({ ...blog, user })
+        blogs: state.blogs.concat({ ...blog, user }),
       }
     },
     addLike(state, action) {
       const id = action.payload.id
       const updatedBlog = action.payload.updatedBlog
-      const updatedBlogs = state.blogs.map(blog =>
+      const updatedBlogs = state.blogs.map((blog) =>
         blog.id === id ? updatedBlog : blog
       )
       return {
-        blogs: updatedBlogs
+        blogs: updatedBlogs,
       }
     },
     deleteBlog(state, action) {
       const id = action.payload
-      const updatedBlogs = state.blogs.filter(blog => blog.id !== id)
+      const updatedBlogs = state.blogs.filter((blog) => blog.id !== id)
       return {
-        blogs: updatedBlogs
+        blogs: updatedBlogs,
       }
-    }
-  }
+    },
+    addComment(state, action) {
+      const { updatedBlog } = action.payload
+      const updatedBlogs = state.blogs.map((blog) =>
+        blog.id === updatedBlog.id ? updatedBlog : blog
+      )
+      return {
+        blogs: updatedBlogs,
+      }
+    },
+  },
 })
 
 export const getAllBlogs = () => {
-  return async dispatch => {
+  return async (dispatch) => {
     const response = await blogService.getAll()
     dispatch(getBlogs(response))
     return response
@@ -51,7 +59,7 @@ export const getAllBlogs = () => {
 }
 
 export const addBlog = (newBlog, user) => {
-  return async dispatch => {
+  return async (dispatch) => {
     const blog = await blogService.create(newBlog)
     dispatch(createBlog({ blog, user }))
     return blog
@@ -59,20 +67,34 @@ export const addBlog = (newBlog, user) => {
 }
 
 export const updateBlogLikes = (id, updatedBlog) => {
-  return async dispatch => {
-    const response = await blogService.update(id, { ...updatedBlog, user: updatedBlog.user.id })
+  return async (dispatch) => {
+    const response = await blogService.update(id, {
+      ...updatedBlog,
+      user: updatedBlog.user.id,
+    })
     dispatch(addLike({ id, updatedBlog }))
     return response
   }
 }
 
 export const removeBlog = (id) => {
-  return async dispatch => {
+  return async (dispatch) => {
     const response = await blogService.deleteBlog(id)
     dispatch(deleteBlog(id))
     return response
   }
 }
 
-export const { getBlogs, createBlog, addLike, deleteBlog } = blogSlice.actions
+export const addBlogComment = (updatedBlog, comment) => {
+  return async (dispatch) => {
+    const response = await blogService.addComments(updatedBlog.id, comment)
+    if (response) {
+      dispatch(addComment({ updatedBlog, comment }))
+    }
+    return response
+  }
+}
+
+export const { getBlogs, createBlog, addLike, deleteBlog, addComment } =
+  blogSlice.actions
 export default blogSlice.reducer
