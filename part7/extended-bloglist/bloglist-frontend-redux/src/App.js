@@ -11,6 +11,7 @@ import Users from './pages/users'
 import Blogs from './pages/blogs'
 import User from './pages/user'
 import BlogDetail from './pages/blog'
+import Navbar from './components/Navbar'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -66,11 +67,8 @@ const App = () => {
     <div>
       <Notification message={message} propertyName={propertyName} />
       <div>
-        <h2>blogs</h2>
-        <p> {user.name} is logged in</p>
-        <button type="submit" onClick={handleLogout}>
-          logout
-        </button>
+        <Navbar loggedInUser={user.name} logout={handleLogout}/>
+        <h2>blog app</h2>
       </div>
       <Routes>
         <Route path="/" element={<Blogs/>} />
