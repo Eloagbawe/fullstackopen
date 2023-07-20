@@ -60,7 +60,7 @@ export const addBlog = (newBlog, user) => {
 
 export const updateBlogLikes = (id, updatedBlog) => {
   return async dispatch => {
-    const response = await blogService.update(id, updatedBlog)
+    const response = await blogService.update(id, { ...updatedBlog, user: updatedBlog.user.id })
     dispatch(addLike({ id, updatedBlog }))
     return response
   }
