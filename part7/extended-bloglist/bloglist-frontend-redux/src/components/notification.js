@@ -1,11 +1,12 @@
 import React from 'react'
+import Alert from '@mui/material/Alert'
 
 const Notification = ({ message, propertyName }) => {
   if (message === null) {
     return null
   }
 
-  return <div className={propertyName}>{message}</div>
+  return <Alert severity={propertyName}>{message}</Alert>
 }
 
 export default Notification

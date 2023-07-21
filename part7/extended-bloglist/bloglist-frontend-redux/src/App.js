@@ -12,17 +12,16 @@ import Blogs from './pages/blogs'
 import User from './pages/user'
 import BlogDetail from './pages/blog'
 import Navbar from './components/Navbar'
+import { Container } from '@mui/material'
 
 const App = () => {
   const dispatch = useDispatch()
-
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  const { message, propertyName } = useSelector(state => state.notification)
+  const { message, propertyName } = useSelector((state) => state.notification)
 
-  const user = useSelector(state => state.auth)
-
+  const user = useSelector((state) => state.auth)
 
   useEffect(() => {
     dispatch(initializeUser())
@@ -30,13 +29,19 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-
+    if (!username || !password) {
+      dispatch(
+        setNotification('Please provide a username and password', 'error', 5)
+      )
+      return
+    }
     try {
-      await dispatch(loginUser({ username, password }))
+      const user = await dispatch(loginUser({ username, password }))
       setUsername('')
       setPassword('')
+      dispatch(setNotification(`Welcome ${user.username}`, 'success', 5))
     } catch (exception) {
-      dispatch(setNotification('wrong username or password', 'fail', 5))
+      dispatch(setNotification('wrong username or password', 'error', 5))
     }
   }
 
@@ -46,7 +51,7 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <Togglable buttonLabel="log in">
+    <Togglable buttonLabel="Log in to the blog app" buttonWidth="15rem">
       <LoginForm
         setUsername={setUsername}
         setPassword={setPassword}
@@ -59,24 +64,30 @@ const App = () => {
 
   if (user === null) {
     return (
-      loginForm()
+      <div style={{ margin: '1rem 0' }}>
+        <Notification message={message} propertyName={propertyName} />
+        <div style={{ width: '100%', textAlign: 'center', margin: '3rem 0' }}>
+          {loginForm()}
+        </div>
+      </div>
     )
   }
 
   return (
-    <div>
-      <Notification message={message} propertyName={propertyName} />
+    <Container>
       <div>
-        <Navbar loggedInUser={user.name} logout={handleLogout}/>
-        <h2>blog app</h2>
+        <Notification message={message} propertyName={propertyName} />
+        <div>
+          <Navbar loggedInUser={user.name} logout={handleLogout} />
+        </div>
+        <Routes>
+          <Route path="/" element={<Blogs />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<User />} />
+          <Route path="/blogs/:id" element={<BlogDetail />} />
+        </Routes>
       </div>
-      <Routes>
-        <Route path="/" element={<Blogs/>} />
-        <Route path="/users" element={<Users/>} />
-        <Route path="/users/:id" element={<User/>} />
-        <Route path="/blogs/:id" element={<BlogDetail/>} />
-      </Routes>
-    </div>
+    </Container>
   )
 }
 

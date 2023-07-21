@@ -4,12 +4,16 @@ import BlogForm from '../components/BlogForm'
 import Togglable from '../components/Togglable'
 import { setNotification } from '../reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  getAllBlogs,
-  addBlog,
-} from '../reducers/blogReducer'
+import { getAllBlogs, addBlog } from '../reducers/blogReducer'
 import { createSelector } from '@reduxjs/toolkit'
-
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  Paper,
+} from '@mui/material'
 
 const Blogs = () => {
   const dispatch = useDispatch()
@@ -54,24 +58,34 @@ const Blogs = () => {
   }
 
   const blogForm = () => (
-    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+    <Togglable
+      buttonLabel="Create New Blog"
+      bgColor="#1B9C85"
+      ref={blogFormRef}
+    >
       <BlogForm createBlog={createBlog} />
     </Togglable>
   )
-
 
   return (
     <div>
       {blogForm()}
       <br />
       <div>
-        {blogs &&
-          blogs.map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-            />
-          ))}
+        <TableContainer component={Paper}>
+          <Table>
+            <TableBody>
+              {blogs &&
+                blogs.map((blog) => (
+                  <TableRow key={blog.id}>
+                    <TableCell>
+                      <Blog blog={blog} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </div>
   )

@@ -15,25 +15,25 @@ const notificationSlice = createSlice({
   initialState: {
     message: null,
     timeOutId: undefined,
-    propertyName: undefined
+    propertyName: undefined,
   },
   reducers: {
-    addNotification(state, action){
+    addNotification(state, action) {
       const { message, timeOutId, propertyName } = action.payload
       return {
         message,
         timeOutId,
-        propertyName
+        propertyName,
       }
     },
-    removeNotification(state){
+    removeNotification(state) {
       return {
         ...state,
         message: null,
-        propertyName: undefined
+        propertyName: undefined,
       }
-    }
-  }
+    },
+  },
 })
 
 export const { addNotification, removeNotification } = notificationSlice.actions
