@@ -29,6 +29,12 @@ const BlogDetail = () => {
     },
   })
 
+  const addCommentMutation = useMutation(blogService.addComments, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    }
+  })
+
   const addLike = (blog) => {
     const updatedBlog = { ...blog, likes: blog.likes + 1, user: blog.user.id }
     addLikeMutation.mutate({ id: blog.id, newObject: updatedBlog })
@@ -39,6 +45,17 @@ const BlogDetail = () => {
       deleteBlogMutation.mutate(blog.id)
       navigate('/')
     }
+  }
+
+  const addComment = (e) => {
+    e.preventDefault()
+    const comment = e.target.comment.value
+
+    if (!comment) {
+      return
+    }
+    addCommentMutation.mutate({ id: blog.id, comment })
+    e.target.comment.value = ''
   }
 
   if (!blog) {
@@ -56,6 +73,18 @@ const BlogDetail = () => {
       {user.id === blog.user.id && (
         <button onClick={() => deleteBlog(blog)}>Remove Blog</button>
       )}
+      <h4>comments</h4>
+      <form onSubmit={addComment}>
+        <input name="comment" type="text"/>
+        <button type="submit">Add comment</button>
+      </form>
+      {blog.comments.length > 0 ? (
+        <ul>
+          {blog.comments.map((comment, key) => (
+            <li key={key}>{comment.text}</li>
+          ))}
+        </ul>
+      ):<p>No comments yet</p>}
     </div>
   )
 }
