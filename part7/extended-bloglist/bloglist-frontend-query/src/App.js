@@ -10,6 +10,7 @@ import Blogs from './pages/blogs'
 import Users from './pages/users'
 import User from './pages/user'
 import BlogDetail from './pages/blog'
+import NavBar from './components/NavBar'
 import { Routes, Route } from 'react-router-dom'
 
 import notificationContext from './store/notificationContext'
@@ -98,15 +99,9 @@ const App = () => {
   }
   return (
     <div>
-      <h1>Blogs</h1>
       <Notification message={message} propertyName={propertyName} />
-      <div>
-        <h2>blogs</h2>
-        <p> {user.name} is logged in</p>
-        <button type="submit" onClick={handleLogout}>
-          logout
-        </button>
-      </div>
+      <NavBar loggedInUser={user.name} logout={handleLogout}/>
+      <h1>Blog App</h1>
       <Routes>
         <Route path="/" element={<Blogs />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />
