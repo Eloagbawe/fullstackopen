@@ -1,14 +1,20 @@
 import React, { useContext } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
 import authContext from '../store/authContext'
 import blogService from '../services/blogs'
+import Stack from 'react-bootstrap/Stack'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import ListGroup from 'react-bootstrap/ListGroup'
+import notificationContext from '../store/notificationContext'
 
 const BlogDetail = () => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const id = useParams().id
   const [user] = useContext(authContext)
+  const [, notificationDispatch] = useContext(notificationContext)
 
   const result = useQuery('blogs', blogService.getAll, {
     retry: 1,
@@ -32,7 +38,7 @@ const BlogDetail = () => {
   const addCommentMutation = useMutation(blogService.addComments, {
     onSuccess: () => {
       queryClient.invalidateQueries('blogs')
-    }
+    },
   })
 
   const addLike = (blog) => {
@@ -44,6 +50,18 @@ const BlogDetail = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
       deleteBlogMutation.mutate(blog.id)
       navigate('/')
+      notificationDispatch({
+        type: 'DISPLAY MESSAGE',
+        payload: {
+          message: 'Blog successfully deleted',
+          propertyName: 'success',
+        },
+      })
+      setTimeout(() => {
+        notificationDispatch({
+          type: 'CLEAR MESSAGE',
+        })
+      }, 5000)
     }
   }
 
@@ -62,29 +80,64 @@ const BlogDetail = () => {
     return null
   }
   return (
-    <div>
-      <h4>{blog.title}</h4>
-      <p>{blog.url}</p>
-      <p>
+    <div className="mt-5">
+      <Stack direction="horizontal" className="align-items-center mb-3">
+        <h4 className="m-0 me-3">{blog.title}</h4>
+        <span className="mt-1">By {blog.author}</span>
+      </Stack>
+      <span style={{ fontWeight: 'bold' }}>Blog Url: </span>
+      <Link to={blog.url} className="blogLinkStyle">
+        {blog.url}
+      </Link>
+      <p className="mt-3">
         {blog.likes} {blog.likes === 1 ? 'like' : 'likes'}
       </p>
-      <button onClick={() => addLike(blog)}>like</button>
-      <p>added by {blog.author}</p>
+      <Button
+        variant="outline-primary"
+        className="me-3 my-4"
+        onClick={() => addLike(blog)}
+      >
+        Like Blog
+      </Button>
       {user.id === blog.user.id && (
-        <button onClick={() => deleteBlog(blog)}>Remove Blog</button>
+        <Button
+          variant="danger"
+          className="my-4"
+          onClick={() => deleteBlog(blog)}
+        >
+          Remove Blog
+        </Button>
       )}
-      <h4>comments</h4>
-      <form onSubmit={addComment}>
-        <input name="comment" type="text"/>
-        <button type="submit">Add comment</button>
-      </form>
+      <h4 className="mt-4 mb-3">comments</h4>
+      <Form onSubmit={addComment} className="my-4">
+        <Form.Group
+          style={{ display: 'inline-block', width: '25%' }}
+          className="me-3"
+        >
+          <Form.Control name="comment" type="text" />
+        </Form.Group>
+        <Button
+          style={{ backgroundColor: '#213555', border: 'none' }}
+          type="submit"
+        >
+          Add comment
+        </Button>
+      </Form>
       {blog.comments.length > 0 ? (
-        <ul>
+        <ListGroup variant="flush" style={{ width: '40%' }}>
           {blog.comments.map((comment, key) => (
-            <li key={key}>{comment.text}</li>
+            <ListGroup.Item
+              style={{ backgroundColor: 'transparent' }}
+              className="py-4"
+              key={key}
+            >
+              {comment.text}
+            </ListGroup.Item>
           ))}
-        </ul>
-      ):<p>No comments yet</p>}
+        </ListGroup>
+      ) : (
+        <p>No comments yet</p>
+      )}
     </div>
   )
 }

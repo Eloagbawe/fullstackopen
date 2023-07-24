@@ -1,18 +1,35 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import Container from 'react-bootstrap/Container'
+import Nav from 'react-bootstrap/Nav'
+import Navbar from 'react-bootstrap/Navbar'
+import Button from 'react-bootstrap/Button'
 
 const NavBar = ({ loggedInUser, logout }) => {
-  const linkStyle = {
-    backgroundColor: '#d3d3d3',
-    padding: 10
-  }
   return (
-    <div style={linkStyle}>
-      <Link to="/" style={{ marginRight: '1rem' }}>blogs</Link>
-      <Link to="/users" style={{ marginRight: '1rem' }}>users</Link>
-      <span style={{ marginRight: '1rem' }}>{loggedInUser} logged in</span>
-      <button type="submit" onClick={(e) => logout(e)}>logout</button>
-    </div>
+    <Navbar expand="lg" className="bg-body-tertiary mt-2 mb-4">
+      <Container>
+        <Navbar.Brand href="/">Blog App</Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link href="/">Blogs</Nav.Link>
+            <Nav.Link href="/users">Users</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text className="me-3">
+            Signed in as: <span>{loggedInUser}</span>
+          </Navbar.Text>
+          <Button
+            className="px-4"
+            variant="outline-secondary"
+            onClick={(e) => logout(e)}
+          >
+            logout
+          </Button>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   )
 }
 

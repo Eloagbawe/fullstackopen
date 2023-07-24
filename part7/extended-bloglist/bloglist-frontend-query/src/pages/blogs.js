@@ -5,6 +5,7 @@ import Blog from '../components/Blog'
 import BlogForm from '../components/BlogForm'
 import Togglable from '../components/Togglable'
 import notificationContext from '../store/notificationContext'
+import Table from 'react-bootstrap/Table'
 
 const Blogs = () => {
   const queryClient = useQueryClient()
@@ -24,7 +25,7 @@ const Blogs = () => {
       notificationDispatch({
         type: 'DISPLAY MESSAGE',
         payload: {
-          message: `a new blog ${data.title} by ${data.author} added`,
+          message: `A new blog ${data.title} by ${data.author} added`,
           propertyName: 'success',
         },
       })
@@ -42,7 +43,7 @@ const Blogs = () => {
   }
 
   const blogForm = () => (
-    <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+    <Togglable buttonLabel="Create a new blog" ref={blogFormRef}>
       <BlogForm createBlog={createBlog} />
     </Togglable>
   )
@@ -56,12 +57,21 @@ const Blogs = () => {
   }
 
   return (
-    <div>
+    <div className="mt-2">
       {blogForm()}
       <br />
-      <div>
-        {blogs && blogs.map((blog) => <Blog key={blog.id} blog={blog} />)}
-      </div>
+      <Table striped bordered hover className="mt-4">
+        <tbody>
+          {blogs &&
+            blogs.map((blog) => (
+              <tr key={blog.id}>
+                <td className="p-3">
+                  <Blog blog={blog} />
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </Table>
     </div>
   )
 }

@@ -30,7 +30,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       userDispatch({
         type: 'SET USER',
-        payload: user
+        payload: user,
       })
       blogService.setToken(user.token)
     }
@@ -39,7 +39,21 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     console.log('logging in with', username)
-
+    if (!username || !password) {
+      notificationDispatch({
+        type: 'DISPLAY MESSAGE',
+        payload: {
+          message: 'username and password is required',
+          propertyName: 'danger',
+        },
+      })
+      setTimeout(() => {
+        notificationDispatch({
+          type: 'CLEAR MESSAGE',
+        })
+      }, 5000)
+      return
+    }
     try {
       const user = await loginService.login({
         username,
@@ -48,7 +62,7 @@ const App = () => {
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       userDispatch({
         type: 'SET USER',
-        payload: user
+        payload: user,
       })
       blogService.setToken(user.token)
       setUsername('')
@@ -58,7 +72,7 @@ const App = () => {
         type: 'DISPLAY MESSAGE',
         payload: {
           message: 'wrong username or password',
-          propertyName: 'fail',
+          propertyName: 'danger',
         },
       })
       setTimeout(() => {
@@ -73,12 +87,12 @@ const App = () => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBlogappUser')
     userDispatch({
-      type: 'REMOVE USER'
+      type: 'REMOVE USER',
     })
   }
 
   const loginForm = () => (
-    <Togglable buttonLabel="log in">
+    <Togglable buttonLabel="Log in to access blog app">
       <LoginForm
         setUsername={setUsername}
         setPassword={setPassword}
@@ -91,24 +105,22 @@ const App = () => {
 
   if (user === null) {
     return (
-      <div>
+      <div className="container mt-5">
         <Notification message={message} propertyName={propertyName} />
         {loginForm()}
       </div>
     )
   }
   return (
-    <div>
+    <div className="container">
       <Notification message={message} propertyName={propertyName} />
-      <NavBar loggedInUser={user.name} logout={handleLogout}/>
-      <h1>Blog App</h1>
+      <NavBar loggedInUser={user.name} logout={handleLogout} />
       <Routes>
         <Route path="/" element={<Blogs />} />
         <Route path="/blogs/:id" element={<BlogDetail />} />
         <Route path="/users" element={<Users />} />
         <Route path="/users/:id" element={<User />} />
       </Routes>
-
     </div>
   )
 }

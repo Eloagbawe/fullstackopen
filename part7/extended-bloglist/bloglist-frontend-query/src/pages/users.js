@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
 import React from 'react'
 import userService from '../services/users'
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom'
+import Table from 'react-bootstrap/Table'
 
 const Users = () => {
   const result = useQuery('users', userService.getUsers, {
@@ -17,25 +17,27 @@ const Users = () => {
   }
 
   return (
-    <div>
-      <table>
+    <div style={{ width: '50%' }}>
+      <Table hover>
         <thead>
           <tr>
-            <th>Users</th>
-            <th>Blogs Created</th>
+            <th className="p-3">Users</th>
+            <th className="p-3">Blogs Created</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user, key) => (
             <tr key={key}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              <td className="p-3">
+                <Link className="blogLinkStyle" to={`/users/${user.id}`}>
+                  {user.name}
+                </Link>
               </td>
-              <td>{user.blogs.length}</td>
+              <td className="p-3">{user.blogs.length}</td>
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   )
 }

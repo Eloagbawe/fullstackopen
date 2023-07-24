@@ -1,22 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const Blog = ({ blog  }) => {
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    paddingBottom: 10,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-
-
+const Blog = ({ blog }) => {
   return (
-    <div style={blogStyle}>
+    <div>
       <div className="blog">
-        <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+        <Link className="blogLinkStyle" to={`/blogs/${blog.id}`}>
+          {blog.title}{' '}
+          <span style={{ fontWeight: 'bold' }}>by {blog.author}</span>
+        </Link>
       </div>
     </div>
   )
