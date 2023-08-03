@@ -3,6 +3,7 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import LoginForm from './components/LoginForm'
+import RecommendedBooks from './components/RecommendedBooks'
 import { useApolloClient } from "@apollo/client";
 
 import { Routes, Route, Link } from 'react-router-dom'
@@ -29,6 +30,8 @@ const App = () => {
         {token ? (
           <>
         <button><Link to="/add_book">add book</Link></button>
+        <button><Link to="/recommend">recommend</Link></button>
+
         <button onClick={logout}>logout</button>
 
         </>) : (
@@ -43,7 +46,7 @@ const App = () => {
         <Route path="/books" element={<Books/>}/>
         <Route path="/add_book" element={<NewBook/>}/>
         <Route path="/login" element={<LoginForm setToken={setToken}/>}/>
-
+        <Route path="/recommend" element={<RecommendedBooks/>}/>
       </Routes>
     </div>
   )
