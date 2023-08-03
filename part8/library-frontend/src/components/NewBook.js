@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS } from "../queries";
+import { useMutation, useQuery } from "@apollo/client";
+import { ADD_BOOK, ALL_BOOKS, ALL_AUTHORS, LOGGED_IN_USER } from "../queries";
 
 const NewBook = () => {
   const [title, setTitle] = useState("");
@@ -9,8 +9,31 @@ const NewBook = () => {
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
   const [addBook] = useMutation(ADD_BOOK, {
-    refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    update: (cache, response) => {
+      cache.updateQuery({ query: ALL_BOOKS, variables: { genre: 'all'} }, (data) => {
+        if (data && data.allBooks) {
+          return { allBooks: data.allBooks.concat(response.data.addBook)}
+        }
+        return
+      })
+    },
+    refetchQueries: [{ query: ALL_AUTHORS }],
   });
+
+  const result = useQuery(LOGGED_IN_USER, {
+    fetchPolicy: 'cache-and-network'
+  });
+
+  if (result.loading) {
+    return <div>loading...</div>;
+  }
+
+  const user = result.data.me;
+ 
+  if (!user) {
+    return <div>Please Log in to access this page</div>;
+  }
+
 
   const submit = async (event) => {
     event.preventDefault();

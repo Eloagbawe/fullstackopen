@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 
 
 const LoginForm = ({ setError, setToken }) => {
-    const navigate = useNavigate()
+  const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
