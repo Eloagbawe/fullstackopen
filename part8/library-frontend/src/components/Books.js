@@ -3,24 +3,23 @@ import { useQuery } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
 
 const Books = () => {
-  const [filter, setFilter] = useState(null);
+  const [filter, setFilter] = useState('all');
 
   const booksByGenre = useQuery(ALL_BOOKS, {
     variables: { genre: filter },
     skip: !filter,
   });
-  const all_books = useQuery(ALL_BOOKS)
+  const all_books = useQuery(ALL_BOOKS, {
+    variables: { genre: 'all' }
+  })
   const [books, setBooks] = useState(null);
 
   useEffect(() => {
-    if (booksByGenre.data && filter !== null) {
+    if (booksByGenre.data) {
       const data = booksByGenre.data.allBooks;
       setBooks(data);
-    } else if (all_books.data) {
-      const data = all_books.data.allBooks;
-      setBooks(data)
     }
-  }, [booksByGenre.data, filter, all_books.data]);
+  }, [booksByGenre.data]);
 
 
 
@@ -31,11 +30,7 @@ const Books = () => {
   const genres =  [...new Set(all_books.data.allBooks.map(book => book.genres).flat(1))]
 
   const filterBooks = (filter) => {
-    if (filter === "all") {
-      setBooks(all_books.data.allBooks)
-    } else {
-      setFilter(filter);
-    }
+    setFilter(filter)
   };
 
   return (
