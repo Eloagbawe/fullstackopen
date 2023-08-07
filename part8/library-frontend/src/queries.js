@@ -72,3 +72,11 @@ export const LOGGED_IN_USER = gql`
     }
   }
 `
+export const BOOK_ADDED = gql`
+  subscription {
+    bookAdded {
+      ...BookDetails
+    }
+  }
+  ${BOOK_DETAILS}
+`
