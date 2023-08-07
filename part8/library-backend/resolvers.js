@@ -15,7 +15,7 @@ const resolvers = {
       const bookAuthor = author ? await Author.findOne({ name: author }) : null;
       let query = {};
       if (author || genre) {
-        if (genre && author) {
+        if (genre !== 'all' && author) {
           query = {
             author: bookAuthor ? bookAuthor._id : null,
             genres: genre,
@@ -23,7 +23,7 @@ const resolvers = {
         } else if (author) {
           query = { author: bookAuthor ? bookAuthor._id : null };
         } else {
-          query = { genres: genre };
+          query = genre === 'all' ? {} : { genres: genre };
         }
       }
       return await Book.find(query).populate("author");
