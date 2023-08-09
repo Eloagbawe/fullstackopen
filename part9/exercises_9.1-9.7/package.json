@@ -1,0 +1,16 @@
+{
+  "name": "typescript_exercises",
+  "version": "1.0.0",
+  "description": "This project contains solutions to exercises 9.1 to 9.7 of the fullstackopen course part 9",
+  "main": "index.js",
+  "scripts": {
+    "ts-node": "ts-node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Elo Agbawe Idiodi",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  }
+}
