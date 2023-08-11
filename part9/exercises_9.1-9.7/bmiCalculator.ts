@@ -1,3 +1,4 @@
+import isNotNumber from "./utils"
 const calculateBmi = (height: number, weight: number): string => {
     const heightInMeters = height / 100
     const heightSquare = heightInMeters * heightInMeters
@@ -15,4 +16,9 @@ const calculateBmi = (height: number, weight: number): string => {
     }
 }
 
-console.log(calculateBmi(180, 74))
+const height = Number(process.argv[2])
+const weight = Number(process.argv[3])
+if (isNotNumber(height) || isNotNumber(weight)) {
+    throw new Error('Height and Weight must be a number')
+}
+console.log(calculateBmi(height, weight))

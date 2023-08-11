@@ -1,3 +1,4 @@
+import isNotNumber from "./utils";
 interface ExerciseReport {
   periodLength: number;
   trainingDays: number;
@@ -40,4 +41,19 @@ const calculateExercises = (
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+const argv = process.argv;
+const target = Number(argv[2]);
+
+if (isNotNumber(target)) {
+  throw new Error('Target must be a number')
+}
+
+argv.splice(0, 3);
+const values = argv.map((value) => {
+  if (isNotNumber(Number(value))) {
+    throw new Error('All values must be numbers')
+  }
+  return Number(value)
+})
+
+console.log(calculateExercises(values, target));
