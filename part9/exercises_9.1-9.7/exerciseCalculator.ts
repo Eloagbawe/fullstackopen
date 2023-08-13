@@ -13,7 +13,15 @@ const calculateExercises = (
   targetHour: number
 ): ExerciseReport => {
   const periodLength = values.length;
-  const trainingDays = values.filter((value) => value !== 0).length;
+
+  if (isNotNumber(targetHour)) {
+    throw new Error('Target must be a number')
+  }
+  const trainingDays = values.filter((value) => {
+    if (isNotNumber(Number(value))) {
+      throw new Error('All values must be numbers')
+    }
+    return value !== 0 }).length;
   const average = values.reduce((total, num) => total + num, 0) / values.length;
   const success = average >= targetHour ? true : false;
   let rating;
@@ -50,9 +58,6 @@ if (isNotNumber(target)) {
 
 argv.splice(0, 3);
 const values = argv.map((value) => {
-  if (isNotNumber(Number(value))) {
-    throw new Error('All values must be numbers')
-  }
   return Number(value)
 })
 
