@@ -1,0 +1,15 @@
+{
+  "name": "patientor-backend",
+  "version": "1.0.0",
+  "description": "a medical record application for doctors who handle diagnoses and basic health information of their patients",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Elo Agbawe Idiodi",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
