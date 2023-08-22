@@ -1,4 +1,4 @@
-import { Patient } from "../types";
+import { Patient, NewPatientEntry } from "../types";
 import data from "../../data/patients";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,15 +14,11 @@ const getPatients = (): Omit<Patient, 'ssn'>[] => {
     return response;
 };
 
-const addPatient = (name: string, dateOfBirth: string, ssn: string, gender: string, occupation: string): Patient => {
+const addPatient = (entry: NewPatientEntry): Patient => {
   const newPatient = {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     id: uuidv4().toString(),
-    name,
-    dateOfBirth,
-    gender,
-    ssn,
-    occupation,
+    ...entry
   };
   data.push(newPatient);
   return newPatient;
