@@ -1,15 +1,17 @@
 import React from 'react'
 
 interface ContentProps {
-    name: string;
-    exerciseCount: number;
+    courseParts: {
+        name: string;
+        exerciseCount: number;
+    }[]
 }
-const Content = ({name, exerciseCount}: ContentProps) => {
+const Content = ({courseParts}: ContentProps) => {
   return (
     <div>
-        <p>
-        {name} {exerciseCount}
-      </p>
+        {courseParts.map((coursePart, index) => (
+        <p key={index}>{coursePart.name} {coursePart.exerciseCount}</p>
+      ))}
     </div>
   )
 }
