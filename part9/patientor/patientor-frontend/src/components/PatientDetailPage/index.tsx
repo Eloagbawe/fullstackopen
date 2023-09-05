@@ -6,6 +6,7 @@ import { Patient, Diagnosis } from '../../types';
 import { Typography } from '@mui/material';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
+import PatientEntry from '../PatientEntries';
 
 
 const PatientDetailPage = () => {
@@ -53,14 +54,7 @@ const PatientDetailPage = () => {
 
         {patientDetail?.entries.map((entry, index) => (
           <div key={index}>
-            <Typography style={{ marginBottom: "0.5em" }}>
-              {entry?.date} <span style={{ fontStyle: "italic" }}>{entry?.description}</span>
-            </Typography>
-            <ul>
-              {entry?.diagnosisCodes?.map((code, index) => (
-                <li key={index}>{code} <span>{getDiagnosisName(code)}</span></li>
-              ))}
-            </ul>
+            <PatientEntry entry={entry} getDiagnosisName={getDiagnosisName}/>
           </div>
         ))}
         
