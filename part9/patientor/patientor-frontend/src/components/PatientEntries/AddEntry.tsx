@@ -1,10 +1,26 @@
-import React from 'react'
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import React, { useState, SyntheticEvent } from 'react'
+import { TextField, Box, Button } from '@mui/material';
 
 
 const AddEntry= () => {
+  const [ description, setDescription ] = useState('')
+  const [ date, setDate ] = useState('')
+  const [ specialist, setSpecialist ] = useState('')
+  const [ diagnosisCodes, setDiagnosisCodes ] = useState('')
+  const [ healthCheckRating, setHealthCheckRating ] = useState('')
+
+  const submitForm = (e: SyntheticEvent) => {
+    e.preventDefault()
+  }
+
+  const cancel = () => {
+    setDescription('')
+    setDate('')
+    setSpecialist('')
+    setDiagnosisCodes('')
+    setHealthCheckRating('')
+  }
+
   return (
     <div>
       <Box
@@ -14,10 +30,11 @@ const AddEntry= () => {
         border: "1px solid grey",
         borderRadius: "1rem",
         padding: "2rem",
-        width: "40%"
+        width: "30%"
       }}
       noValidate
       autoComplete="off"
+      onSubmit={submitForm}
     >
       <h4>New Health Check Entry</h4>
       <div>
@@ -26,6 +43,8 @@ const AddEntry= () => {
           label="Description"
           variant="standard"
           InputLabelProps={{ shrink: true }}
+          value={description}
+          onChange={({ target }) => setDescription(target.value)}
         />
       </div>
 
@@ -36,6 +55,8 @@ const AddEntry= () => {
             type='date'
             variant="standard"
             InputLabelProps={{ shrink: true }}
+            value={date}
+            onChange={({ target }) => setDate(target.value)}
           />
       </div>
 
@@ -45,6 +66,8 @@ const AddEntry= () => {
           label="specialist"
           variant="standard"
           InputLabelProps={{ shrink: true }}
+          value={specialist}
+          onChange={({ target }) => setSpecialist(target.value)}
         />
       </div>
 
@@ -55,6 +78,8 @@ const AddEntry= () => {
           variant="standard"
           type="number"
           InputLabelProps={{ shrink: true }}
+          value={healthCheckRating}
+          onChange={({ target }) => setHealthCheckRating(target.value)}
         />
       </div>
 
@@ -64,12 +89,14 @@ const AddEntry= () => {
           label="Diagnosis Codes"
           variant="standard"
           InputLabelProps={{ shrink: true }}
+          value={diagnosisCodes}
+          onChange={({ target }) => setDiagnosisCodes(target.value)}
         />
       </div>
 
       <div style={{marginTop: '2rem'}}>
-        <Button variant="contained" style={{marginRight: '3rem'}}>Add Entry</Button>
-        <Button variant="contained" style={{backgroundColor: '#BB2525'}}>Cancel</Button>
+        <Button variant="contained" style={{marginRight: '3rem'}} type='submit'>Add Entry</Button>
+        <Button variant="contained" style={{backgroundColor: '#BB2525'}} type='button' onClick={cancel}>Cancel</Button>
       </div>
      
 
