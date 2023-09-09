@@ -2,17 +2,20 @@ import { useEffect, useState } from 'react'
 import { useParams } from "react-router-dom";
 import patientService from '../../services/patients';
 import diagnosisService from '../../services/diagnoses'
-import { Patient, Diagnosis } from '../../types';
-import { Typography } from '@mui/material';
+import { Patient, Diagnosis, EntryFormValues } from '../../types';
+import { Typography, Alert, Button } from '@mui/material';
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import PatientEntry from '../PatientEntries';
-
+import AddEntry from '../PatientEntries/AddEntry';
+import axios from 'axios';
 
 const PatientDetailPage = () => {
   const { id } = useParams();
   const [ patientDetail, setPatientDetail ] = useState<Patient | null>(null);
   const [ diagnoses, setDiagnoses ] = useState<Diagnosis[]>([])
+  const [error, setError] = useState('');
+  const [ healthEntryForm, sethealthEntryForm ] = useState(false)
 
   useEffect(() => {
     patientService.getPatient(id as string).then((data) => {
@@ -28,6 +31,40 @@ const PatientDetailPage = () => {
   const getDiagnosisName = (code: string) => {
     const diagnosis = diagnoses.find((diagnosis) => diagnosis.code === code)
     return diagnosis?.name
+  }
+
+  const onSubmit = (values: EntryFormValues) => {
+    patientService.createEntry(values, id).then((data) => {
+      if (patientDetail?.entries) {
+        const updatedEntries = patientDetail?.entries?.concat(data);
+        setPatientDetail({...patientDetail, entries: updatedEntries})
+      }
+    }).catch((err) => {
+      if (axios.isAxiosError(err)) {
+        if (err?.response?.data && typeof err?.response?.data === "string") {
+          const message = err.response.data.replace('Something went wrong. Error: ', '');
+          console.error(message);
+          setError(message);
+        } else {
+          setError("Unrecognized axios error");
+        }
+      } else {
+        console.error("Unknown error", err);
+        setError("Unknown error");
+      }
+
+      setTimeout(() => {
+        setError('')
+      }, 5000)
+    })
+  }
+
+  const addHealthEntry = () => {
+    sethealthEntryForm(true)
+  }
+
+  const closeHealthEntry = () => {
+    sethealthEntryForm(false)
   }
 
   return (
@@ -51,6 +88,10 @@ const PatientDetailPage = () => {
         <Typography variant="h6" style={{ margin: "2rem 0" }}>
           Entries
         </Typography>
+        {error && <Alert severity="error" style={{ margin: "2rem 0" }}>{error}</Alert>}
+        <Button style={{ marginBottom: "2rem" }} onClick={addHealthEntry}>Add Health Check Entry</Button>
+
+        {healthEntryForm && <AddEntry onSubmit={onSubmit} cancel={closeHealthEntry}/>}
 
         {patientDetail?.entries.map((entry, index) => (
           <div key={index}>

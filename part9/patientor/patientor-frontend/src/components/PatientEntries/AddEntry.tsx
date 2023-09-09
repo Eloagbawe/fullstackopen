@@ -1,24 +1,40 @@
 import React, { useState, SyntheticEvent } from 'react'
 import { TextField, Box, Button } from '@mui/material';
+import { EntryFormValues } from '../../types';
 
+interface Props {
+  onSubmit: (values: EntryFormValues) => void;
+  cancel: () => void;
+}
 
-const AddEntry= () => {
+const AddEntry= ({onSubmit, cancel}: Props) => {
   const [ description, setDescription ] = useState('')
   const [ date, setDate ] = useState('')
   const [ specialist, setSpecialist ] = useState('')
   const [ diagnosisCodes, setDiagnosisCodes ] = useState('')
-  const [ healthCheckRating, setHealthCheckRating ] = useState('')
+  const [ healthCheckRating, setHealthCheckRating ] = useState(0)
 
   const submitForm = (e: SyntheticEvent) => {
     e.preventDefault()
+    onSubmit({
+      description,
+      date,
+      specialist,
+      diagnosisCodes: diagnosisCodes.split(", "),
+      healthCheckRating,
+      type: "HealthCheck"
+    })
+    // clearForm()
   }
 
-  const cancel = () => {
+  const clearForm = () => {
     setDescription('')
     setDate('')
     setSpecialist('')
     setDiagnosisCodes('')
-    setHealthCheckRating('')
+    setHealthCheckRating(0)
+
+    cancel()
   }
 
   return (
@@ -39,7 +55,7 @@ const AddEntry= () => {
       <h4>New Health Check Entry</h4>
       <div>
       <TextField
-          id="outlined-required"
+          id="description"
           label="Description"
           variant="standard"
           InputLabelProps={{ shrink: true }}
@@ -50,7 +66,7 @@ const AddEntry= () => {
 
       <div>
         <TextField
-            id="outlined-required"
+            id="date"
             label="Date"
             type='date'
             variant="standard"
@@ -62,7 +78,7 @@ const AddEntry= () => {
 
       <div>
       <TextField
-          id="outlined-required"
+          id="specialist"
           label="specialist"
           variant="standard"
           InputLabelProps={{ shrink: true }}
@@ -73,19 +89,19 @@ const AddEntry= () => {
 
       <div>
       <TextField
-          id="outlined-required"
+          id="healthCheckRating"
           label="Health Check Rating"
           variant="standard"
           type="number"
           InputLabelProps={{ shrink: true }}
           value={healthCheckRating}
-          onChange={({ target }) => setHealthCheckRating(target.value)}
+          onChange={({ target }) => setHealthCheckRating(parseInt(target.value))}
         />
       </div>
 
       <div>
       <TextField
-          id="outlined-required"
+          id="diagnosisCodes"
           label="Diagnosis Codes"
           variant="standard"
           InputLabelProps={{ shrink: true }}
@@ -96,7 +112,7 @@ const AddEntry= () => {
 
       <div style={{marginTop: '2rem'}}>
         <Button variant="contained" style={{marginRight: '3rem'}} type='submit'>Add Entry</Button>
-        <Button variant="contained" style={{backgroundColor: '#BB2525'}} type='button' onClick={cancel}>Cancel</Button>
+        <Button variant="contained" style={{backgroundColor: '#BB2525'}} type='button' onClick={clearForm}>Cancel</Button>
       </div>
      
 
