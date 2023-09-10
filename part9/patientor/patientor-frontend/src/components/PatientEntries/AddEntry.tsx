@@ -5,25 +5,56 @@ import { EntryFormValues } from '../../types';
 interface Props {
   onSubmit: (values: EntryFormValues) => void;
   cancel: () => void;
+  type: string
 }
 
-const AddEntry= ({onSubmit, cancel}: Props) => {
+const AddEntry= ({onSubmit, cancel, type}: Props) => {
   const [ description, setDescription ] = useState('')
   const [ date, setDate ] = useState('')
   const [ specialist, setSpecialist ] = useState('')
   const [ diagnosisCodes, setDiagnosisCodes ] = useState('')
   const [ healthCheckRating, setHealthCheckRating ] = useState(0)
+  const [ employerName, setEmployerName ] = useState('')
+  const [ startDate, setStartDate ] = useState('')
+  const [ endDate, setEndDate ] = useState('')
+  const [ dischargeDate, setDischargeDate ] = useState('')
+  const [ criteria, setCriteria ] = useState('')
+
 
   const submitForm = (e: SyntheticEvent) => {
     e.preventDefault()
-    onSubmit({
-      description,
-      date,
-      specialist,
-      diagnosisCodes: diagnosisCodes.split(", "),
-      healthCheckRating,
-      type: "HealthCheck"
-    })
+    const commonValues = { description, date, specialist,  diagnosisCodes: diagnosisCodes.split(", ")};
+
+    if (type === 'Health Check') {
+      onSubmit({
+        ...commonValues,
+        healthCheckRating,
+        type: 'HealthCheck'
+      })
+    }
+    if (type === 'OccupationalHealthcare') {
+      onSubmit({
+        ...commonValues,
+        type: 'OccupationalHealthcare',
+        employerName,
+        sickLeave: {
+          startDate,
+          endDate
+        }
+
+      })
+    }
+
+    if (type === 'Hospital') {
+      onSubmit({
+        ...commonValues,
+        type: 'Hospital',
+        discharge: {
+          date: dischargeDate,
+          criteria
+        }
+      })
+    }
     // clearForm()
   }
 
@@ -33,7 +64,9 @@ const AddEntry= ({onSubmit, cancel}: Props) => {
     setSpecialist('')
     setDiagnosisCodes('')
     setHealthCheckRating(0)
-
+    setStartDate('')
+    setEmployerName('')
+    setEndDate('')
     cancel()
   }
 
@@ -52,7 +85,11 @@ const AddEntry= ({onSubmit, cancel}: Props) => {
       autoComplete="off"
       onSubmit={submitForm}
     >
-      <h4>New Health Check Entry</h4>
+      {type === 'Health Check' && <h4>New Health Check Entry</h4>}
+      {type === 'OccupationalHealthcare' && <h4>New Occupational Health Entry</h4>}
+      {type === 'Hospital' && <h4>New Hospital Entry</h4>}
+
+
       <div>
       <TextField
           id="description"
@@ -87,7 +124,7 @@ const AddEntry= ({onSubmit, cancel}: Props) => {
         />
       </div>
 
-      <div>
+      {type === 'Health Check' && <div>
       <TextField
           id="healthCheckRating"
           label="Health Check Rating"
@@ -97,8 +134,58 @@ const AddEntry= ({onSubmit, cancel}: Props) => {
           value={healthCheckRating}
           onChange={({ target }) => setHealthCheckRating(parseInt(target.value))}
         />
-      </div>
+      </div>}
 
+      {type === 'OccupationalHealthcare' && <div>
+      <TextField
+          id="employerName"
+          label="Employer Name"
+          variant="standard"
+          InputLabelProps={{ shrink: true }}
+          value={employerName}
+          onChange={({ target }) => setEmployerName(target.value)}
+        />
+        <p>Sick Leave</p>
+        <TextField
+            id="startDate"
+            label="Start Date"
+            type='date'
+            variant="standard"
+            InputLabelProps={{ shrink: true }}
+            value={startDate}
+            onChange={({ target }) => setStartDate(target.value)}
+          />
+         <TextField
+            id="endDate"
+            label="End Date"
+            type='date'
+            variant="standard"
+            InputLabelProps={{ shrink: true }}
+            value={endDate}
+            onChange={({ target }) => setEndDate(target.value)}
+          />
+        </div>}
+
+        {type === 'Hospital' && <div>
+        <TextField
+            id="dischargeDate"
+            label="Discharge Date"
+            type='date'
+            variant="standard"
+            InputLabelProps={{ shrink: true }}
+            value={dischargeDate}
+            onChange={({ target }) => setDischargeDate(target.value)}
+          />
+          <TextField
+          id="criteria"
+          label="Criteria"
+          variant="standard"
+          InputLabelProps={{ shrink: true }}
+          value={criteria}
+          onChange={({ target }) => setCriteria(target.value)}
+        />
+
+          </div>}
       <div>
       <TextField
           id="diagnosisCodes"

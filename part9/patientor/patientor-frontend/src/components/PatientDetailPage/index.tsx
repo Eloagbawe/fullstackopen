@@ -15,7 +15,8 @@ const PatientDetailPage = () => {
   const [ patientDetail, setPatientDetail ] = useState<Patient | null>(null);
   const [ diagnoses, setDiagnoses ] = useState<Diagnosis[]>([])
   const [error, setError] = useState('');
-  const [ healthEntryForm, sethealthEntryForm ] = useState(false)
+  const [ entryForm, setEntryForm ] = useState(false)
+  const [ formType, setFormType ] = useState('')
 
   useEffect(() => {
     patientService.getPatient(id as string).then((data) => {
@@ -60,12 +61,26 @@ const PatientDetailPage = () => {
   }
 
   const addHealthEntry = () => {
-    sethealthEntryForm(true)
+    setEntryForm(true)
+    setFormType('Health Check')
   }
 
-  const closeHealthEntry = () => {
-    sethealthEntryForm(false)
+  const closeEntryForm = () => {
+    setEntryForm(false)
   }
+
+  const addOccupationalEntry = () => {
+    setEntryForm(true)
+    setFormType('OccupationalHealthcare')
+  }
+
+  const addHospitalEntry = () => {
+    setEntryForm(true)
+    setFormType('Hospital')
+  }
+
+
+
 
   return (
     <div style={{ margin: "3rem 0"}}>
@@ -89,9 +104,13 @@ const PatientDetailPage = () => {
           Entries
         </Typography>
         {error && <Alert severity="error" style={{ margin: "2rem 0" }}>{error}</Alert>}
-        <Button style={{ marginBottom: "2rem" }} onClick={addHealthEntry}>Add Health Check Entry</Button>
+        <Button style={{ marginBottom: "2rem", marginRight: "1rem" }} onClick={addHealthEntry}>Add Health Check Entry</Button>
+        <Button style={{ marginBottom: "2rem", marginRight: "1rem" }} onClick={addOccupationalEntry}>Add Occupational Health Entry</Button>
+        <Button style={{ marginBottom: "2rem" }} onClick={addHospitalEntry}>Add Hospital Entry</Button>
 
-        {healthEntryForm && <AddEntry onSubmit={onSubmit} cancel={closeHealthEntry}/>}
+
+
+        {entryForm && <AddEntry onSubmit={onSubmit} cancel={closeEntryForm} type={formType}/>}
 
         {patientDetail?.entries.map((entry, index) => (
           <div key={index}>
