@@ -1,6 +1,8 @@
-import React, { useState, SyntheticEvent } from 'react'
-import { TextField, Box, Button } from '@mui/material';
-import { EntryFormValues } from '../../types';
+import React, { useState, SyntheticEvent, useEffect } from 'react'
+import { TextField, Box, Button, Select, MenuItem, SelectChangeEvent, OutlinedInput, InputLabel } from '@mui/material';
+import { EntryFormValues, Diagnosis } from '../../types';
+import diagnosisService from '../../services/diagnoses'
+
 
 interface Props {
   onSubmit: (values: EntryFormValues) => void;
@@ -12,18 +14,41 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
   const [ description, setDescription ] = useState('')
   const [ date, setDate ] = useState('')
   const [ specialist, setSpecialist ] = useState('')
-  const [ diagnosisCodes, setDiagnosisCodes ] = useState('')
+  const [ diagnosisCodes, setDiagnosisCodes ] = useState<string[]>([])
   const [ healthCheckRating, setHealthCheckRating ] = useState(0)
   const [ employerName, setEmployerName ] = useState('')
   const [ startDate, setStartDate ] = useState('')
   const [ endDate, setEndDate ] = useState('')
   const [ dischargeDate, setDischargeDate ] = useState('')
   const [ criteria, setCriteria ] = useState('')
+  const [ diagnoses, setDiagnoses ] = useState<Diagnosis[]>([])
 
+  useEffect(() => {
+    diagnosisService.getAllDiagnoses().then((data) => {
+      setDiagnoses(data)
+    })
+  },[])
+
+  const handleDiagnosesChange = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+    setDiagnosisCodes(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
+  const handleRatingChange = (event: SelectChangeEvent<number>) => {
+    const {
+      target: { value },
+    } = event;
+    setHealthCheckRating(typeof value === 'number' ? value : 0)
+  }
 
   const submitForm = (e: SyntheticEvent) => {
     e.preventDefault()
-    const commonValues = { description, date, specialist,  diagnosisCodes: diagnosisCodes.split(", ")};
+    const commonValues = { description, date, specialist,  diagnosisCodes};
 
     if (type === 'Health Check') {
       onSubmit({
@@ -62,7 +87,7 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
     setDescription('')
     setDate('')
     setSpecialist('')
-    setDiagnosisCodes('')
+    setDiagnosisCodes([])
     setHealthCheckRating(0)
     setStartDate('')
     setEmployerName('')
@@ -125,15 +150,23 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
       </div>
 
       {type === 'Health Check' && <div>
-      <TextField
+      <InputLabel id="healthCheckRating" style={{margin: '0.5rem 0'}}>Health Check Rating</InputLabel>
+
+      <Select
           id="healthCheckRating"
           label="Health Check Rating"
           variant="standard"
           type="number"
-          InputLabelProps={{ shrink: true }}
           value={healthCheckRating}
-          onChange={({ target }) => setHealthCheckRating(parseInt(target.value))}
-        />
+          onChange={handleRatingChange}
+          sx={{ width: '15rem'}}
+        >
+          <MenuItem value={0}>0</MenuItem>
+          <MenuItem value={1}>1</MenuItem>
+          <MenuItem value={2}>2</MenuItem>
+          <MenuItem value={3}>3</MenuItem>
+
+        </Select>
       </div>}
 
       {type === 'OccupationalHealthcare' && <div>
@@ -186,15 +219,28 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
         />
 
           </div>}
-      <div>
-      <TextField
-          id="diagnosisCodes"
+      <div style={{ margin: '1rem 0'}}>
+        <InputLabel id="diagnosisCodes" style={{margin: '0.5rem 0'}}>Diagnosis Codes</InputLabel>
+        <Select
+          labelId="diagnosisCodes"
+          id="diagnosesCodes"
           label="Diagnosis Codes"
-          variant="standard"
-          InputLabelProps={{ shrink: true }}
+          multiple
           value={diagnosisCodes}
-          onChange={({ target }) => setDiagnosisCodes(target.value)}
-        />
+          onChange={handleDiagnosesChange}
+          input={<OutlinedInput label="Diagnosis Codes" />}
+          sx={{ width: '15rem'}}
+        >
+          {diagnoses.map((diagnosis, index) => (
+            <MenuItem
+              key={index}
+              value={diagnosis.code}
+             
+            >
+              {diagnosis.code}
+            </MenuItem>
+          ))}
+        </Select>
       </div>
 
       <div style={{marginTop: '2rem'}}>
