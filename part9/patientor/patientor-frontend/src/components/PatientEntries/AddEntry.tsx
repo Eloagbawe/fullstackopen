@@ -10,7 +10,7 @@ interface Props {
   type: string
 }
 
-const AddEntry= ({onSubmit, cancel, type}: Props) => {
+const AddEntry= ({onSubmit, cancel, type }: Props) => {
   const [ description, setDescription ] = useState('')
   const [ date, setDate ] = useState('')
   const [ specialist, setSpecialist ] = useState('')
@@ -80,7 +80,7 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
         }
       })
     }
-    // clearForm()
+    clearForm()
   }
 
   const clearForm = () => {
@@ -101,7 +101,7 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
       component="form"
       sx={{
         '& .MuiTextField-root': { m: 1, width: '25ch' },
-        border: "1px solid grey",
+        border: "1px dotted grey",
         borderRadius: "1rem",
         padding: "2rem",
         width: "30%"
@@ -135,6 +135,7 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
             InputLabelProps={{ shrink: true }}
             value={date}
             onChange={({ target }) => setDate(target.value)}
+            style={{ marginTop: '1rem', marginBottom: '1rem'}}
           />
       </div>
 
@@ -159,7 +160,7 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
           type="number"
           value={healthCheckRating}
           onChange={handleRatingChange}
-          sx={{ width: '15rem'}}
+          sx={{ width: '12rem'}}
         >
           <MenuItem value={0}>0</MenuItem>
           <MenuItem value={1}>1</MenuItem>
@@ -178,24 +179,25 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
           value={employerName}
           onChange={({ target }) => setEmployerName(target.value)}
         />
-        <p>Sick Leave</p>
         <TextField
             id="startDate"
-            label="Start Date"
+            label="Sick Leave Start Date"
             type='date'
             variant="standard"
             InputLabelProps={{ shrink: true }}
             value={startDate}
             onChange={({ target }) => setStartDate(target.value)}
+            style={{ marginTop: '1rem', marginBottom: '1rem'}}
           />
          <TextField
             id="endDate"
-            label="End Date"
+            label="Sick Leave End Date"
             type='date'
             variant="standard"
             InputLabelProps={{ shrink: true }}
             value={endDate}
             onChange={({ target }) => setEndDate(target.value)}
+            style={{ marginTop: '1rem', marginBottom: '1rem'}}
           />
         </div>}
 
@@ -208,6 +210,7 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
             InputLabelProps={{ shrink: true }}
             value={dischargeDate}
             onChange={({ target }) => setDischargeDate(target.value)}
+            style={{ marginTop: '1rem', marginBottom: '1rem'}}
           />
           <TextField
           id="criteria"
@@ -219,7 +222,7 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
         />
 
           </div>}
-      <div style={{ margin: '1rem 0'}}>
+      <div style={{ marginTop: '1rem', marginBottom: '1rem'}}>
         <InputLabel id="diagnosisCodes" style={{margin: '0.5rem 0'}}>Diagnosis Codes</InputLabel>
         <Select
           labelId="diagnosisCodes"
@@ -229,15 +232,14 @@ const AddEntry= ({onSubmit, cancel, type}: Props) => {
           value={diagnosisCodes}
           onChange={handleDiagnosesChange}
           input={<OutlinedInput label="Diagnosis Codes" />}
-          sx={{ width: '15rem'}}
+          sx={{ width: '12rem'}}
         >
           {diagnoses.map((diagnosis, index) => (
             <MenuItem
               key={index}
               value={diagnosis.code}
-             
             >
-              {diagnosis.code}
+              {diagnosis.code} {diagnosis.name}
             </MenuItem>
           ))}
         </Select>

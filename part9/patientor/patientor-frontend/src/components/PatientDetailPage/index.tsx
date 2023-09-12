@@ -104,11 +104,9 @@ const PatientDetailPage = () => {
           Entries
         </Typography>
         {error && <Alert severity="error" style={{ margin: "2rem 0" }}>{error}</Alert>}
-        <Button style={{ marginBottom: "2rem", marginRight: "1rem" }} onClick={addHealthEntry}>Add Health Check Entry</Button>
-        <Button style={{ marginBottom: "2rem", marginRight: "1rem" }} onClick={addOccupationalEntry}>Add Occupational Health Entry</Button>
-        <Button style={{ marginBottom: "2rem" }} onClick={addHospitalEntry}>Add Hospital Entry</Button>
-
-
+        <Button style={{ marginBottom: "2rem", marginRight: "1rem" }} onClick={addHealthEntry} variant="outlined">Add Health Check Entry</Button>
+        <Button style={{ marginBottom: "2rem", marginRight: "1rem" }} onClick={addOccupationalEntry} variant="outlined">Add Occupational Health Entry</Button>
+        <Button style={{ marginBottom: "2rem" }} onClick={addHospitalEntry} variant="outlined">Add Hospital Entry</Button>
 
         {entryForm && <AddEntry onSubmit={onSubmit} cancel={closeEntryForm} type={formType}/>}
 
